@@ -27,6 +27,18 @@ exports.config = {
     };
 ```
 
+Example:
+
+```js
+exports.config = {
+      plugins: [{
+        package: 'jasmine2-protractor-utils',
+        screenshotOnExpectFailure:true,
+        screenshotOnSpecFailure:true
+      }]
+    };
+```
+
 ## package
 
  This is the plugin package name , same as of npm module name for the plugin , 'jasmine2-protractor-utils' usually and preferably
