@@ -19,7 +19,7 @@ Add this plugin to the protractor config file:
 ```js
 exports.config = {
       plugins: [{
-        path: 'node_modules/jasmine2-protractor-utils/index.js',
+        package: 'jasmine2-protractor-utils',
         screenshotOnExpectFailure: {Boolean}    (Default - false),
         screenshotOnSpecFailure: {Boolean}      (Default - false),
         screenshotPath: {String}                (Default - 'reports/screenshots')
@@ -27,9 +27,9 @@ exports.config = {
     };
 ```
 
-## path
+## package
 
- This is the plugin path , 'node_modules/jasmine2-protractor-utils/index.js' usually
+ This is the plugin package name , same as of npm module name for the plugin , 'jasmine2-protractor-utils' usually and preferably
 
 
 ## screenshotOnExpectFailure
