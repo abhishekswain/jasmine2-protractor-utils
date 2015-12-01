@@ -1,6 +1,6 @@
 {
   "name": "jasmine2-protractor-utils",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Utilities for Protractor with jasmine2 [Screenshot, Browser Consolelog]",
   "main": "index.js",
   "scripts": {

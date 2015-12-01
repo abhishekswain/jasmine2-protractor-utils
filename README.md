@@ -8,6 +8,14 @@ Utilities for Protractor with jasmine2 [Screenshot, Browser Console log]
 
 # Usage
 
+## How to install
+
+npm install jasmine2-protractor-utils -g
+
+*To install a particular version:* npm install jasmine2-protractor-utils@version
+
+
+Add this plugin to the protractor config file:
 ```js
 exports.config = {
       plugins: [{
