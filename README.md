@@ -8,6 +8,7 @@ Utilities for Protractor with jasmine2 [Screenshot, Browser Console log]
 
 # Usage
 
+```js
 exports.config = {
       plugins: [{
         path: 'node_modules/jasmine2-protractor-utils/index.js',
@@ -16,14 +17,14 @@ exports.config = {
         screenshotPath: {String}                (Default - 'reports/screenshots')
       }]
     };
+```
 
-
- ## path :
+## path
 
  This is the plugin path , 'node_modules/jasmine2-protractor-utils/index.js' usually
 
 
- ## screenshotOnExpectFailure :
+## screenshotOnExpectFailure
 
  Takes a screenshot for each Jasmine2 expect failure, is set true.
  Screenshot will be taken in 'png' format and file name would be: description+spec description+index.png
@@ -31,7 +32,7 @@ exports.config = {
  Default: false
 
 
- ## screenshotOnSpecFailure :
+## screenshotOnSpecFailure
 
  Take screenshot for each spec failure , if set to true.
  Screenshot will be taken in 'png' format and file name would be: description+spec description.png
@@ -39,7 +40,7 @@ exports.config = {
  Default: false
 
 
- ##screenshotPath :
+## screenshotPath
 
  Path where screenshots will be saved. If path does not exist , will be created.
  e.g './reports/something/savehere/' , please take care of './' and '/' at the beginning and end.
