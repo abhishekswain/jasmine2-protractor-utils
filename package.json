@@ -1,7 +1,7 @@
 {
   "name": "jasmine2-protractor-utils",
-  "version": "1.0.5",
-  "description": "Utilities for Protractor with jasmine2 [Screenshot, Browser Consolelog]",
+  "version": "1.0.6",
+  "description": "Utilities for Protractor with jasmine2 [Screenshot, Browser Console log]",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
