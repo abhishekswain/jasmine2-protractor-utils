@@ -49,5 +49,6 @@ exports.config = {
 
 
 ## TODO
-It can fail your spec/test if browser console has errors
+It can fail your spec/test if browser console has errors.
+
 It can output browser console logs on failure or always :)
