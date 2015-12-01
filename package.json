@@ -25,7 +25,7 @@
     "url": "https://github.com/abhishekswain/jasmine2-protractor-utils/issues"
   },
   "homepage": "https://github.com/abhishekswain/jasmine2-protractor-utils#readme",
-  "devDependencies": {
+  "dependencies": {
     "mkdirp": "^0.5.1",
     "q": "^1.4.1"
   }
