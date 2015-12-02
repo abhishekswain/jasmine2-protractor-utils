@@ -1,10 +1,10 @@
 # jasmine2-protractor-utils
-Utilities for Protractor with jasmine2 [Screenshot, Browser Console log]
+Utilities for Protractor with jasmine2 [Screenshot, Browser Console log and more]
 
 1. This plugin can take a screenshot for each Jasmine2 expect failure
 2. It can take screenshot for each spec failure as well
-3. TODO: It can fail your spec/test if browser console has errors
-4. TODO: It can output browser console logs on failure or always :)
+3. It can fail your spec/test if browser console has errors
+4. TODO: It can output browser console logs on failure(Done) or always(TODO) :)
 
 # Usage
 
@@ -23,6 +23,10 @@ exports.config = {
         screenshotOnExpectFailure: {Boolean}    (Default - false),
         screenshotOnSpecFailure: {Boolean}      (Default - false),
         screenshotPath: {String}                (Default - 'reports/screenshots')
+        failTestOnErrorLog: {
+                    failTestOnErrorLogLevel: {Number},  (Default - 900)
+                    excludeKeywords: {A JSON Array}
+                }
       }]
     };
 ```
@@ -34,7 +38,11 @@ exports.config = {
       plugins: [{
         package: 'jasmine2-protractor-utils',
         screenshotOnExpectFailure:true,
-        screenshotOnSpecFailure:true
+        screenshotOnSpecFailure:true,
+        failTestOnErrorLog: {
+                    failTestOnErrorLogLevel: 900,
+                    excludeKeywords: ['keyword1', 'keyword2']
+                }
       }]
     };
 ```
@@ -67,8 +75,21 @@ exports.config = {
 
  Default: 'reports/screenshots'
 
+## failTestOnErrorLog (Chrome only)
+
+Contains a set of configuration for console log. When browser console has errors of a certain log level (default:>900), the spec/test is marked failed along with log in the error report/stacktrace.
+
+### failTestOnErrorLogLevel
+
+Log level, test fails of the browser console log has logs **more than** this specified level.
+
+### excludeKeywords
+
+An array of keywords to be excluded , while searching for error logs. i.e If a log contains any of these keywords , spec/test will not be marked failed.
+
+Please do not specify this flag , if you don't supply any such keywords.
+
 
 ## TODO
-It can fail your spec/test if browser console has errors.
 
-It can output browser console logs on failure or always :)
+It can output browser console logs on failure(done) or always(TODO) :)

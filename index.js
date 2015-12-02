@@ -89,6 +89,70 @@ protractorUtil.takeScreenshotOnSpecFail = function (context) {
 };
 
 /**
+ * Fails the test/spec if browser has console logs
+ *
+ * @param {Object} context The plugin context object
+ * @return {!webdriver.promise.Promise.<R>} A promise
+ */
+protractorUtil.failTestOnErrorLog = function (context) {
+
+    if (context.config.failTestOnErrorLog) {
+        return global.browser.getProcessedConfig().then(function (config) {
+
+
+            beforeEach(function () {
+
+                /*
+                 * A Jasmine custom matcher
+                 */
+                var matchers = {
+                    toEqualBecause: function () {
+
+                        return {
+                            compare: function (actual, expected, custMsg) {
+                                var result = {
+                                    pass: jasmine.pp(actual) === jasmine.pp(expected),
+                                    message: 'Expected ' + jasmine.pp(actual) + ' to equal ' + jasmine.pp(expected) + ' Because: ' + custMsg
+                                };
+                                return result;
+                            }
+                        };
+                    } };
+                global.jasmine.addMatchers(matchers);
+
+            });
+
+            afterEach(function () {
+
+                /*
+                 * Verifies that console has no error logs, if error log is there test is marked as failure
+                 */
+                global.browser.manage().logs().get('browser').then(function (browserLogs) {
+
+                    // browserLogs is an array of objects with level and message fields
+                    if (browserLogs) {
+                        browserLogs.forEach(function (log) {
+                            var logLevel = context.config.failTestOnErrorLog.failTestOnErrorLogLevel ? context.config.failTestOnErrorLog.failTestOnErrorLogLevel : 900;
+                            var flag = false;
+                            if (log.level.value > logLevel) { // it's an error log
+                                if (context.config.failTestOnErrorLog.excludeKeywords) {
+                                    context.config.failTestOnErrorLog.excludeKeywords.forEach(function (keyword) {
+                                        if (log.message.search(keyword) > -1) {
+                                            flag = true;
+                                        }
+                                    });
+                                }
+                                expect(log.level.value > logLevel && flag).toEqualBecause(true, 'Error logs present in console:' + require('util').inspect(log));
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    }
+};
+
+/**
  * Appends this index number to screenshot name , in order to get a screenshot for each expect failure
  * @type {number}
  */
@@ -125,6 +189,7 @@ protractorUtil.prototype.setup = function () {
 
     protractorUtil.takeScreenshotOnExpectFail(this);
     protractorUtil.takeScreenshotOnSpecFail(this);
+    protractorUtil.failTestOnErrorLog(this);
 
 };
 
