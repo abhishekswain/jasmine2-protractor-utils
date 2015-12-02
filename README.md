@@ -47,6 +47,22 @@ exports.config = {
     };
 ```
 
+
+**Please Note**
+
+If you are using **failTestOnErrorLog** feature, there should be an **onPrepare:** block in your Protractor config which returns a promise.
+If not present , please add the following to the config file:
+
+```js
+ onPrepare: function () {
+
+        // returning the promise makes protractor wait for the reporter config before executing tests
+        return global.browser.getProcessedConfig().then(function (config) {
+
+        });
+        }
+```
+
 ## package
 
  This is the plugin package name , same as of npm module name for the plugin , 'jasmine2-protractor-utils' usually and preferably
@@ -82,6 +98,8 @@ Contains a set of configuration for console log. When browser console has errors
 ### failTestOnErrorLogLevel
 
 Log level, test fails of the browser console log has logs **more than** this specified level.
+
+Default: 900
 
 ### excludeKeywords
 
