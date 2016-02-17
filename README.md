@@ -48,6 +48,8 @@ exports.config = {
         package: 'jasmine2-protractor-utils',
         screenshotOnExpectFailure:true,
         screenshotOnSpecFailure:true,
+        clearFoldersBeforeTest: true,
+        htmlReportDir: './reports/htmlReports',
         failTestOnErrorLog: {
                     failTestOnErrorLogLevel: 900,
                     excludeKeywords: ['keyword1', 'keyword2']
@@ -110,6 +112,8 @@ If not present , please add the following to the config file:
 
  Path where HTML report will be saved. If path does not exist , will be created.
  e.g './reports/something/savehere/' , please take care of './' and '/' at the beginning and end.
+
+ If you want to use the default location , pass value - 'true'.
 
  Default: 'reports/htmlReports'
 
