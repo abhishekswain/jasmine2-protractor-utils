@@ -1,0 +1,47 @@
+table { 
+	width: 100%; 
+	border-collapse: separate; 
+	margin:50px auto;
+	}
+
+th { 
+	background: #3498db; 
+	color: white; 
+	font-weight: bold; 
+	}
+
+td, th { 
+	padding: 10px; 
+	border: 1px solid #ccc; 
+	text-align: left; 
+	font-size: 18px;
+    vertical-align: text-top;
+  
+	}
+
+.labels tr td {
+	background-color: #2cc16a;
+	font-weight: bold;
+	color: #fff;
+}
+
+.labelsFail tr td {
+    background-color: red;
+    font-weight: bold;
+    color: #fff;
+}
+
+
+.label tr td label {
+	display: block;
+}
+
+
+[data-toggle="toggle"] {
+	display: none;
+}
+
+div{
+ word-break: break-all;
+ max-width: 1500px;
+}

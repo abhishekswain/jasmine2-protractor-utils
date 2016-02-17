@@ -10,7 +10,8 @@ Utilities for Protractor with jasmine2 [Screenshot, Browser Console log and more
 1. This plugin can take a screenshot for each Jasmine2 expect failure
 2. It can take screenshot for each spec failure as well
 3. It can fail your spec/test if browser console has errors
-4. TODO: It can output browser console logs on failure(Done) or always(TODO) :)
+4. It can generate beautiful readable HTML reports
+5. TODO: It can output browser console logs on failure(Done) or always(TODO) :)
 
 # Usage
 
@@ -29,6 +30,8 @@ exports.config = {
         screenshotOnExpectFailure: {Boolean}    (Default - false),
         screenshotOnSpecFailure: {Boolean}      (Default - false),
         screenshotPath: {String}                (Default - 'reports/screenshots')
+        clearFoldersBeforeTest: {Boolean}       (Default - false),
+        htmlReportDir:  {String}                (Default - './reports/htmlReports')
         failTestOnErrorLog: {
                     failTestOnErrorLogLevel: {Number},  (Default - 900)
                     excludeKeywords: {A JSON Array}
@@ -96,6 +99,19 @@ If not present , please add the following to the config file:
  e.g './reports/something/savehere/' , please take care of './' and '/' at the beginning and end.
 
  Default: 'reports/screenshots'
+
+## clearFoldersBeforeTest
+
+ If this flag set to true, screenshot and html report directories will be emptied before generating new reports and screenshots
+
+ Default: false
+
+## htmlReportDir
+
+ Path where HTML report will be saved. If path does not exist , will be created.
+ e.g './reports/something/savehere/' , please take care of './' and '/' at the beginning and end.
+
+ Default: 'reports/htmlReports'
 
 ## failTestOnErrorLog (Chrome only)
 

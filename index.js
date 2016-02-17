@@ -1,20 +1,29 @@
 var q = require('q');
 var fs = require('fs');
+var fse = require('fs-extra');
 var mkdirp = require('mkdirp');
+var jasmine2Reporter = require('./reporter/jasmine2_reporter.js');
 
 /**
  * This plugin does few things:
  *   1. Takes a screenshot for each jasmine expect/matcher failure
  *   2. Takes a screenshot for each test/spec failure
- *   3. Marks the test as failure if browser console log has error - Chrome only //TODO
+ *   3. Genrates a HTML report
+ *   4. Marks the test as failure if browser console log has error - Chrome only //TODO
  *
  *    exports.config = {
  *      plugins: [{
- *        path: 'node_modules/jasmine2-protractor-utils/index.js',
- *        screenshotOnExpectFailure: {Boolean}    (Default - false),
- *        screenshotOnSpecFailure: {Boolean}      (Default - false),
- *        screenshotPath: {String}                (Default - 'reports/screenshots')
- *      }]
+ *      package: 'jasmine2-protractor-utils',
+ *      screenshotOnExpectFailure: {Boolean}    (Default - false),
+ *      screenshotOnSpecFailure: {Boolean}      (Default - false),
+ *      screenshotPath: {String}                (Default - 'reports/screenshots')
+ *      clearFoldersBeforeTest: {Boolean}       (Default - false),
+ *      htmlReportDir:  {String}                (Default - './reports/htmlReports')
+ *      failTestOnErrorLog: {
+ *               failTestOnErrorLogLevel: {Number},  (Default - 900)
+ *               excludeKeywords: {A JSON Array}
+ *          }
+ *       }]
  *    };
  *    @author Abhishek Swain
  *    @blog www.qaautomationsimplified.com
@@ -86,6 +95,24 @@ protractorUtil.takeScreenshotOnSpecFail = function (context) {
             })());
         });
     }
+};
+
+/**
+ * Generates HTML report for tests
+ *
+ * @param {Object} context The plugin context object
+ * @return {!webdriver.promise.Promise.<R>} A promise
+ */
+protractorUtil.generateHTMLReport = function (context) {
+
+    return global.browser.getProcessedConfig().then(function (config) {
+
+        if (context.config.htmlReportDir) {
+            return global.browser.getProcessedConfig().then(function (config) {
+                jasmine.getEnv().addReporter(new jasmine2Reporter(context.config.htmlReportDir));
+            });
+        }
+    });
 };
 
 /**
@@ -179,7 +206,13 @@ protractorUtil.prototype.setup = function () {
         }
     }
     else {
-
+        if (this.config.clearFoldersBeforeTest) {
+            try {
+                fse.removeSync(this.config.screenshotPath);
+            } catch (err) {
+                console.error(err);
+            }
+        }
 
         mkdirp.sync(this.config.screenshotPath, function (err) {
             if (err) console.error(err);
@@ -187,9 +220,39 @@ protractorUtil.prototype.setup = function () {
         });
     }
 
+
+    if (!this.config.htmlReportDir) {
+        //creates reports folder if does not exist
+        var reportsDir = './reports';
+        if (!fs.existsSync(reportsDir)) {
+            fs.mkdirSync(reportsDir);
+        }
+
+        //creates htmlReports folder if does not exist
+        var htmlReportsDir = './reports/htmlReports';
+        if (!fs.existsSync(htmlReportsDir)) {
+            fs.mkdirSync(htmlReportsDir);
+        }
+    }
+    else {
+        if (this.config.clearFoldersBeforeTest) {
+            try {
+                fse.removeSync(this.config.htmlReportDir);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        mkdirp.sync(this.config.htmlReportDir, function (err) {
+            if (err) console.error(err);
+            else console.log(self.config.htmlReportDir + ' folder created!');
+        });
+    }
+
     protractorUtil.takeScreenshotOnExpectFail(this);
     protractorUtil.takeScreenshotOnSpecFail(this);
     protractorUtil.failTestOnErrorLog(this);
+    protractorUtil.generateHTMLReport(this);
 
 };
 

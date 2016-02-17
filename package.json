@@ -1,32 +1,33 @@
 {
-  "name": "jasmine2-protractor-utils",
-  "version": "1.1.2",
-  "description": "Utilities for Protractor with jasmine2 [Screenshot, Browser Console log and more]",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/abhishekswain/jasmine2-protractor-utils.git"
-  },
-  "keywords": [
-    "jasmine2",
-    "Protractor",
-    "protractor-screenshot",
-    "screenshot-on-failure",
-    "protractor-utilities",
-    "browser-console-log",
-    "protractor-spec-fail-on-console-error"
-  ],
-  "author": "Abhishek Swain",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/abhishekswain/jasmine2-protractor-utils/issues"
-  },
-  "homepage": "https://github.com/abhishekswain/jasmine2-protractor-utils#readme",
-  "dependencies": {
-    "mkdirp": "^0.5.1",
-    "q": "^1.4.1"
-  }
+    "name": "jasmine2-protractor-utils",
+    "version": "1.2.0",
+    "description": "Utilities for Protractor with jasmine2 [HTML Reports, Screenshot, Browser Console log and more]",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/abhishekswain/jasmine2-protractor-utils.git"
+    },
+    "keywords": [
+        "jasmine2",
+        "Protractor",
+        "protractor-screenshot",
+        "screenshot-on-failure",
+        "protractor-utilities",
+        "browser-console-log",
+        "protractor-spec-fail-on-console-error"
+    ],
+    "author": "Abhishek Swain",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/abhishekswain/jasmine2-protractor-utils/issues"
+    },
+    "homepage": "https://github.com/abhishekswain/jasmine2-protractor-utils#readme",
+    "dependencies": {
+        "mkdirp": "^0.5.1",
+        "q": "^1.4.1",
+        "fs-extra": "^0.26.5"
+    }
 }
