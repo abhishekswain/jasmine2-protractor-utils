@@ -107,13 +107,21 @@ var Jasmine2Reporter = function (htmlReportPath) {
 
         suites.forEach(function (suite, index) {
 
+            var flag = true;
+
             suite.specs.forEach(function(spec,specIndex){
 
                 if(spec.failedExpectations.length > 0){
 
                     suites[index].testStatus = "Fail";
+                    flag = false;
                 }
+
             });
+
+            if(flag){
+                suites[index].testStatus = "Pass";
+            }
 
         });
 
