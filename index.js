@@ -52,7 +52,13 @@ protractorUtil.takeScreenshotOnExpectFail = function (context) {
                     global.browser.takeScreenshot().then(function (png) {
 
                         var fileName = (config.capabilities.browserName + '-' + self.result.fullName + '-' + 'expect failure-' + protractorUtil.index++).replace(/[\/\\]/g, ' ');
-                        var stream = fs.createWriteStream((context.config.screenshotPath ? context.config.screenshotPath.replace('./', '') : 'reports/screenshots/') + fileName + '.png');
+                        var screenshotPathUserSupplied;
+                        if (context.config.screenshotPath) {
+                            if (((context.config.screenshotPath.charAt(context.config.screenshotPath.length - 1)) != '/') || ((context.config.screenshotPath.charAt(context.config.screenshotPath.length - 1)) != '\\')) {
+                                screenshotPathUserSupplied = context.config.screenshotPath + '/';
+                            }
+                        }
+                        var stream = fs.createWriteStream((screenshotPathUserSupplied ? context.config.screenshotPath.replace('./', '') : 'reports/screenshots/') + fileName + '.png');
                         stream.write(new Buffer(png, 'base64'));
                         stream.end();
                     }, function (err) {
