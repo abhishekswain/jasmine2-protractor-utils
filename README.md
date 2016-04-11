@@ -130,10 +130,9 @@ If not present , please add the following to the config file:
 ## htmlReportDir
 
  Path where HTML report will be saved. If path does not exist , will be created.
- e.g './reports/something/savehere/' , please take care of './' and '/' at the beginning and end.
+ e.g './reports/something/savehere/'
 
- If you want to use the default location , pass value - 'true'.
- If you don't want HTML reports to be generated , avoid mentioning 'htmlReportDir' in the plugin configuration.
+ If you want to use the default location , never mention 'htmlReportDir' with the plug in configuration. Where as 'disableHTMLReport' must be set to false.
 
  Default: 'reports/htmlReports'
 

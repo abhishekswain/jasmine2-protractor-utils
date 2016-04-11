@@ -127,6 +127,7 @@ protractorUtil.generateHTMLReport = function (context) {
         }
 
         else {
+
             return global.browser.getProcessedConfig().then(function (config) {
                 var screenshotLocation = context.config.screenshotPath ? context.config.screenshotPath : '.reports/screenshots';
                 jasmine.getEnv().addReporter(new jasmine2Reporter('./reports/htmlReports', screenshotLocation));
@@ -215,10 +216,10 @@ protractorUtil.prototype.setup = function () {
     if (!this.config.screenshotPath) {
 
         //creates reports folder if does not exist
-        var reportsDir = './reports';
-        if (!fs.existsSync(reportsDir)) {
-            fs.mkdirSync(reportsDir);
-        }
+//        var reportsDir = './reports';
+//        if (!fs.existsSync(reportsDir)) {
+//            fs.mkdirSync(reportsDir);
+//        }
 
 
         if (!this.config.disableScreenshot) {
@@ -258,10 +259,10 @@ protractorUtil.prototype.setup = function () {
 
     if (!this.config.htmlReportDir) {
         //creates reports folder if does not exist
-        var reportsDir = './reports';
-        if (!fs.existsSync(reportsDir)) {
-            fs.mkdirSync(reportsDir);
-        }
+//        var reportsDir = './reports';
+//        if (!fs.existsSync(reportsDir)) {
+//            fs.mkdirSync(reportsDir);
+//        }
 
         if (!this.config.disableHTMLReport) {
             //creates htmlReports folder if does not exist
