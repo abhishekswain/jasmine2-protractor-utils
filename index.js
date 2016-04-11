@@ -52,6 +52,9 @@ protractorUtil.takeScreenshotOnExpectFail = function (context) {
                     global.browser.takeScreenshot().then(function (png) {
 
                         var fileName = (config.capabilities.browserName + '-' + self.result.fullName + '-' + 'expect failure-' + protractorUtil.index++).replace(/[\/\\]/g, ' ');
+                        if (fileName.length > 245) {
+                            fileName = (config.capabilities.browserName + '-' + self.result.fullName).replace(/[\/\\]/g, ' ').substring(0, 230) + '-' + 'expect failure-' + protractorUtil.index++;
+                        }
                         var screenshotPathUserSupplied;
                         if (context.config.screenshotPath) {
                             if (((context.config.screenshotPath.charAt(context.config.screenshotPath.length - 1)) != '/') || ((context.config.screenshotPath.charAt(context.config.screenshotPath.length - 1)) != '\\')) {
@@ -89,6 +92,9 @@ protractorUtil.takeScreenshotOnSpecFail = function (context) {
                             // take screenshot
                             global.browser.takeScreenshot().then(function (png) {
                                 var fileName = (config.capabilities.browserName + '-' + result.fullName).replace(/[\/\\]/g, ' ');
+                                if (fileName.length > 245) {
+                                    fileName = (config.capabilities.browserName + '-' + result.fullName).replace(/[\/\\]/g, ' ').substring(0, 230);
+                                }
                                 var stream = fs.createWriteStream((context.config.screenshotPath ? context.config.screenshotPath.replace('./', '') : 'reports/screenshots/') + fileName + '.png');
                                 stream.write(new Buffer(png, 'base64'));
                                 stream.end();
@@ -199,10 +205,19 @@ protractorUtil.prototype.setup = function () {
     var self = this;
 
     if (!this.config.screenshotPath) {
+
         //creates reports folder if does not exist
         var reportsDir = './reports';
         if (!fs.existsSync(reportsDir)) {
             fs.mkdirSync(reportsDir);
+        }
+
+        if (this.config.clearFoldersBeforeTest) {
+            try {
+                fse.removeSync('./reports/screenshots');
+            } catch (err) {
+                console.error(err);
+            }
         }
 
         //creates screenshots folder if does not exist

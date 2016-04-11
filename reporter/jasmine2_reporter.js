@@ -129,7 +129,7 @@ var Jasmine2Reporter = function (htmlReportPath) {
         var resultToWrite = 'data = '+ JSON.stringify(results);
 
         fs.writeFileSync(htmlReportDir+'/data.json', resultToWrite, 'utf-8');
-        fse.copy(__dirname+'/../report',htmlReportDir);
+        fse.copySync(__dirname+'/../report',htmlReportDir);
 
         try {
             fse.copySync(__dirname+'/../report',htmlReportDir);
