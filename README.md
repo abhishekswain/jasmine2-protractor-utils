@@ -27,6 +27,8 @@ Add this plugin to the protractor config file:
 exports.config = {
       plugins: [{
         package: 'jasmine2-protractor-utils',
+        disableHTMLReport: {Boolean},
+        disableScreenshot: {Boolean},
         screenshotOnExpectFailure: {Boolean}    (Default - false),
         screenshotOnSpecFailure: {Boolean}      (Default - false),
         screenshotPath: {String}                (Default - 'reports/screenshots')
@@ -46,6 +48,9 @@ Example:
 exports.config = {
       plugins: [{
         package: 'jasmine2-protractor-utils',
+        disableHTMLReport: false,
+        disableScreenshot: false,
+        screenshotPath:'./reports/screenshots',
         screenshotOnExpectFailure:true,
         screenshotOnSpecFailure:true,
         clearFoldersBeforeTest: true,
@@ -77,6 +82,20 @@ If not present , please add the following to the config file:
 ## package
 
  This is the plugin package name , same as of npm module name for the plugin , 'jasmine2-protractor-utils' usually and preferably
+
+
+## disableHTMLReport
+
+ If set to 'true', disables HTML report generation.
+
+ Valid Options: true/false
+
+
+## disableScreenshot
+
+ If set to 'true' , disables screenshot generation.
+
+ Valid Options: true/false
 
 
 ## screenshotOnExpectFailure
@@ -114,6 +133,7 @@ If not present , please add the following to the config file:
  e.g './reports/something/savehere/' , please take care of './' and '/' at the beginning and end.
 
  If you want to use the default location , pass value - 'true'.
+ If you don't want HTML reports to be generated , avoid mentioning 'htmlReportDir' in the plugin configuration.
 
  Default: 'reports/htmlReports'
 

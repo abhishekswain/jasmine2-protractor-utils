@@ -8,7 +8,7 @@
 var fs = require('fs');
 var fse = require('fs-extra');
 
-var Jasmine2Reporter = function (htmlReportPath) {
+var Jasmine2Reporter = function (htmlReportPath,screenshotPath) {
 
     var htmlReportDir = htmlReportPath;
 

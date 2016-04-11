@@ -121,7 +121,15 @@ protractorUtil.generateHTMLReport = function (context) {
 
         if (context.config.htmlReportDir) {
             return global.browser.getProcessedConfig().then(function (config) {
-                jasmine.getEnv().addReporter(new jasmine2Reporter(context.config.htmlReportDir));
+                var screenshotLocation = context.config.screenshotPath ? context.config.screenshotPath : '.reports/screenshots';
+                jasmine.getEnv().addReporter(new jasmine2Reporter(context.config.htmlReportDir, screenshotLocation));
+            });
+        }
+
+        else {
+            return global.browser.getProcessedConfig().then(function (config) {
+                var screenshotLocation = context.config.screenshotPath ? context.config.screenshotPath : '.reports/screenshots';
+                jasmine.getEnv().addReporter(new jasmine2Reporter('./reports/htmlReports', screenshotLocation));
             });
         }
     });
@@ -212,6 +220,15 @@ protractorUtil.prototype.setup = function () {
             fs.mkdirSync(reportsDir);
         }
 
+
+        if (!this.config.disableScreenshot) {
+            //creates screenshots folder if does not exist
+            var screenshotDir = './reports/screenshots';
+            if (!fs.existsSync(screenshotDir)) {
+                fs.mkdirSync(screenshotDir);
+            }
+        }
+
         if (this.config.clearFoldersBeforeTest) {
             try {
                 fse.removeSync('./reports/screenshots');
@@ -219,14 +236,14 @@ protractorUtil.prototype.setup = function () {
                 console.error(err);
             }
         }
-
-        //creates screenshots folder if does not exist
-        var screenshotDir = './reports/screenshots';
-        if (!fs.existsSync(screenshotDir)) {
-            fs.mkdirSync(screenshotDir);
-        }
     }
     else {
+
+        mkdirp.sync(this.config.screenshotPath, function (err) {
+            if (err) console.error(err);
+            else console.log(self.config.screenshotPath + ' folder created!');
+        });
+
         if (this.config.clearFoldersBeforeTest) {
             try {
                 fse.removeSync(this.config.screenshotPath);
@@ -235,10 +252,7 @@ protractorUtil.prototype.setup = function () {
             }
         }
 
-        mkdirp.sync(this.config.screenshotPath, function (err) {
-            if (err) console.error(err);
-            else console.log(self.config.screenshotPath + ' folder created!');
-        });
+
     }
 
 
@@ -249,10 +263,20 @@ protractorUtil.prototype.setup = function () {
             fs.mkdirSync(reportsDir);
         }
 
-        //creates htmlReports folder if does not exist
-        var htmlReportsDir = './reports/htmlReports';
-        if (!fs.existsSync(htmlReportsDir)) {
-            fs.mkdirSync(htmlReportsDir);
+        if (!this.config.disableHTMLReport) {
+            //creates htmlReports folder if does not exist
+            var htmlReportsDir = './reports/htmlReports';
+            if (!fs.existsSync(htmlReportsDir)) {
+                fs.mkdirSync(htmlReportsDir);
+            }
+
+            if (this.config.clearFoldersBeforeTest) {
+                try {
+                    fse.removeSync(htmlReportsDir);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
         }
     }
     else {
@@ -269,11 +293,14 @@ protractorUtil.prototype.setup = function () {
             else console.log(self.config.htmlReportDir + ' folder created!');
         });
     }
-
-    protractorUtil.takeScreenshotOnExpectFail(this);
-    protractorUtil.takeScreenshotOnSpecFail(this);
+    if (!this.config.disableScreenshot) {
+        protractorUtil.takeScreenshotOnExpectFail(this);
+        protractorUtil.takeScreenshotOnSpecFail(this);
+    }
     protractorUtil.failTestOnErrorLog(this);
-    protractorUtil.generateHTMLReport(this);
+    if (!this.config.disableHTMLReport) {
+        protractorUtil.generateHTMLReport(this);
+    }
 
 };
 
