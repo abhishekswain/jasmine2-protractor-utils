@@ -55,15 +55,17 @@ protractorUtil.takeScreenshotOnExpectFail = function (context) {
                         if (fileName.length > 245) {
                             fileName = (config.capabilities.browserName + '-' + self.result.fullName).replace(/[\/\\]/g, ' ').substring(0, 230) + '-' + 'expect failure-' + protractorUtil.index++;
                         }
-                        var screenshotPathUserSupplied;
+
                         if (context.config.screenshotPath) {
                             if (((context.config.screenshotPath.charAt(context.config.screenshotPath.length - 1)) != '/') || ((context.config.screenshotPath.charAt(context.config.screenshotPath.length - 1)) != '\\')) {
-                                screenshotPathUserSupplied = context.config.screenshotPath + '/';
+                                var screenshotPathUserSupplied = context.config.screenshotPath + '/';
                             }
                         }
-                        var stream = fs.createWriteStream((screenshotPathUserSupplied ? context.config.screenshotPath.replace('./', '') : 'reports/screenshots/') + fileName + '.png');
+
+                        var stream = fs.createWriteStream((screenshotPathUserSupplied ? screenshotPathUserSupplied.replace('./', '') : 'reports/screenshots/') + fileName + '.png');
                         stream.write(new Buffer(png, 'base64'));
                         stream.end();
+
                     }, function (err) {
                         console.log('Error while taking screenshot - ' + err.message);
                     });
@@ -90,14 +92,22 @@ protractorUtil.takeScreenshotOnSpecFail = function (context) {
                     specDone: function (result) {
                         if (result.failedExpectations.length > 0) {
                             // take screenshot
-                            global.browser.takeScreenshot().then(function (png) {
+                            browser.takeScreenshot().then(function (png) {
                                 var fileName = (config.capabilities.browserName + '-' + result.fullName).replace(/[\/\\]/g, ' ');
                                 if (fileName.length > 245) {
                                     fileName = (config.capabilities.browserName + '-' + result.fullName).replace(/[\/\\]/g, ' ').substring(0, 230);
                                 }
-                                var stream = fs.createWriteStream((context.config.screenshotPath ? context.config.screenshotPath.replace('./', '') : 'reports/screenshots/') + fileName + '.png');
+
+                                if (context.config.screenshotPath) {
+                                    if (((context.config.screenshotPath.charAt(context.config.screenshotPath.length - 1)) != '/') || ((context.config.screenshotPath.charAt(context.config.screenshotPath.length - 1)) != '\\')) {
+                                        var screenshotPathUserSupplied = context.config.screenshotPath + '/';
+                                    }
+                                }
+
+                                var stream = fs.createWriteStream((screenshotPathUserSupplied ? screenshotPathUserSupplied.replace('./', '') : 'reports/screenshots/') + fileName + '.png');
                                 stream.write(new Buffer(png, 'base64'));
                                 stream.end();
+
                             }, function (err) {
                                 console.log('Error while taking screenshot - ' + err.message);
                             });
@@ -221,15 +231,6 @@ protractorUtil.prototype.setup = function () {
 //            fs.mkdirSync(reportsDir);
 //        }
 
-
-        if (!this.config.disableScreenshot) {
-            //creates screenshots folder if does not exist
-            var screenshotDir = './reports/screenshots';
-            if (!fs.existsSync(screenshotDir)) {
-                fs.mkdirSync(screenshotDir);
-            }
-        }
-
         if (this.config.clearFoldersBeforeTest) {
             try {
                 fse.removeSync('./reports/screenshots');
@@ -237,13 +238,21 @@ protractorUtil.prototype.setup = function () {
                 console.error(err);
             }
         }
+
+        if (!this.config.disableScreenshot) {
+
+            //creates screenshots folder if does not exist
+            var screenshotDir = './reports/screenshots';
+
+            mkdirp.sync(screenshotDir, function (err) {
+                if (err) console.error(err);
+                else console.log(htmlReportsDir + ' folder created!');
+            });
+
+        }
+
     }
     else {
-
-        mkdirp.sync(this.config.screenshotPath, function (err) {
-            if (err) console.error(err);
-            else console.log(self.config.screenshotPath + ' folder created!');
-        });
 
         if (this.config.clearFoldersBeforeTest) {
             try {
@@ -253,31 +262,36 @@ protractorUtil.prototype.setup = function () {
             }
         }
 
-
+        mkdirp.sync(this.config.screenshotPath, function (err) {
+            if (err) console.error(err);
+            else console.log(self.config.screenshotPath + ' folder created!');
+        });
     }
 
 
     if (!this.config.htmlReportDir) {
-        //creates reports folder if does not exist
-//        var reportsDir = './reports';
-//        if (!fs.existsSync(reportsDir)) {
-//            fs.mkdirSync(reportsDir);
-//        }
+
+
+
+        //creates htmlReports folder if does not exist
+        var htmlReportsDir = './reports/htmlReports';
+
+        if (this.config.clearFoldersBeforeTest) {
+            try {
+                fse.removeSync(htmlReportsDir);
+            } catch (err) {
+                console.error(err);
+            }
+        }
 
         if (!this.config.disableHTMLReport) {
-            //creates htmlReports folder if does not exist
-            var htmlReportsDir = './reports/htmlReports';
-            if (!fs.existsSync(htmlReportsDir)) {
-                fs.mkdirSync(htmlReportsDir);
-            }
 
-            if (this.config.clearFoldersBeforeTest) {
-                try {
-                    fse.removeSync(htmlReportsDir);
-                } catch (err) {
-                    console.error(err);
-                }
-            }
+            mkdirp.sync(htmlReportsDir, function (err) {
+                if (err) console.error(err);
+                else console.log(htmlReportsDir + ' folder created!');
+            });
+
+
         }
     }
     else {
