@@ -1,6 +1,6 @@
 {
     "name": "jasmine2-protractor-utils",
-    "version": "1.2.5",
+    "version": "1.2.6",
     "description": "Utilities for Protractor with jasmine2 [HTML Reports, Screenshot, Browser Console log and more]",
     "main": "index.js",
     "scripts": {
@@ -13,6 +13,9 @@
     "keywords": [
         "jasmine2",
         "Protractor",
+        "Protractor html report",
+        "Jasmine html report",
+        "html reporter Protractor",
         "protractor-screenshot",
         "screenshot-on-failure",
         "protractor-utilities",
