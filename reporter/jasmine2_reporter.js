@@ -8,7 +8,7 @@
 var fs = require('fs');
 var fse = require('fs-extra');
 
-var Jasmine2Reporter = function (htmlReportPath,screenshotPath) {
+var Jasmine2Reporter = function (htmlReportPath, screenshotPath, config) {
 
     var htmlReportDir = htmlReportPath;
 
@@ -109,9 +109,9 @@ var Jasmine2Reporter = function (htmlReportPath,screenshotPath) {
 
             var flag = true;
 
-            suite.specs.forEach(function(spec,specIndex){
+            suite.specs.forEach(function (spec, specIndex) {
 
-                if(spec.failedExpectations.length > 0){
+                if (spec.failedExpectations.length > 0) {
 
                     suites[index].testStatus = "Fail";
                     flag = false;
@@ -119,20 +119,40 @@ var Jasmine2Reporter = function (htmlReportPath,screenshotPath) {
 
             });
 
-            if(flag){
+            if (flag) {
                 suites[index].testStatus = "Pass";
             }
+
+            var screenNames = fs.readdirSync(screenshotPath);
+
+            suite.specs.forEach(function (spec, specIndex) {
+
+                    suites[index].specs[specIndex].screenShots = [];
+                    screenNames.forEach(function (screens, screenIndex) {
+                        if (spec.fullName.search((screens.replace(new RegExp("[0-9]*\\.png$"), "").replace('-expect failure-',"").replace(config.capabilities.browserName+'-',"").replace('.png',"").trim())) > -1) {
+                            suites[index].specs[specIndex].screenShots.push(screens);
+                        }
+                    });
+
+            });
 
         });
 
         results.suites = suites;
-        var resultToWrite = 'data = '+ JSON.stringify(results);
+        results.screenshotPath = screenshotPath;
+        var resultToWrite = 'data = ' + JSON.stringify(results);
 
-        fs.writeFileSync(htmlReportDir+'/data.json', resultToWrite, 'utf-8');
-        fse.copySync(__dirname+'/../report',htmlReportDir);
+        fs.writeFileSync(htmlReportDir + '/data.json', resultToWrite, 'utf-8');
+        fse.copySync(__dirname + '/../report', htmlReportDir);
 
         try {
-            fse.copySync(__dirname+'/../report',htmlReportDir);
+            fse.copySync(__dirname + '/../report', htmlReportDir);
+        } catch (err) {
+            console.error(err)
+        }
+
+        try {
+            fse.copySync(screenshotPath, htmlReportDir+'/screenshots');
         } catch (err) {
             console.error(err)
         }

@@ -132,7 +132,7 @@ protractorUtil.generateHTMLReport = function (context) {
         if (context.config.htmlReportDir) {
             return global.browser.getProcessedConfig().then(function (config) {
                 var screenshotLocation = context.config.screenshotPath ? context.config.screenshotPath : '.reports/screenshots';
-                jasmine.getEnv().addReporter(new jasmine2Reporter(context.config.htmlReportDir, screenshotLocation));
+                jasmine.getEnv().addReporter(new jasmine2Reporter(context.config.htmlReportDir, screenshotLocation, config));
             });
         }
 
@@ -140,7 +140,7 @@ protractorUtil.generateHTMLReport = function (context) {
 
             return global.browser.getProcessedConfig().then(function (config) {
                 var screenshotLocation = context.config.screenshotPath ? context.config.screenshotPath : '.reports/screenshots';
-                jasmine.getEnv().addReporter(new jasmine2Reporter('./reports/htmlReports', screenshotLocation));
+                jasmine.getEnv().addReporter(new jasmine2Reporter('./reports/htmlReports', screenshotLocation, config));
             });
         }
     });

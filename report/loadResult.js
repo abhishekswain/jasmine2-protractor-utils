@@ -68,7 +68,24 @@ var loadContent = function () {
                 } else {
                     failedSpecsTemplate = failedSpecsTemplate.replace('failedSpecsList', failedExpectAll);
                 }
-                specTemplateLast = '<td>specTime</td>\n <td>Please check screenshots folder!</td>\n </tr>\n </tbody>';
+
+                var screenshotTemplate=" ";
+                spec.screenShots.forEach(function (screens, scIndex) {
+
+                    if (scIndex === 0) {
+                        screenshotTemplate = '\n <p><a class="group-'+index+ '-' + specindex +'"'+'href="screenshots/' + screens + '" title="' + screens + '">Click Here</a></p>';
+                    }
+                    else {
+
+                        screenshotTemplate += '\n <p style="display:none"><a class="group-'+index+ '-' + specindex +'"'+ 'href="screenshots/' + screens + '" title="' + screens + '">Photo 2</a></p>';
+
+                    }
+                });
+
+                screenshotTemplate = '<div>' + screenshotTemplate + '</div>';
+
+
+                specTemplateLast = '<td>specTime</td>\n <td>' + screenshotTemplate + '</td>\n </tr>\n </tbody>';
                 specTemplateLast = specTemplateLast.replace('specTime', getTimeDiff(spec.startTime, spec.endTime));
 
                 tempspecAll = tempspecAll + specTemplate0 + passedSpecsTemplate + failedSpecsTemplate + specTemplateLast;
@@ -81,8 +98,8 @@ var loadContent = function () {
 
         document.getElementById('1').innerHTML = headerTemplate + all;
     } catch (err) {
-        console.log('Error While Loading Contents!!'+err);
-        alert('Error While Loading Contents!! : '+err);
+        console.log('Error While Loading Contents!!' + err);
+        alert('Error While Loading Contents!! : ' + err);
     }
 };
 
