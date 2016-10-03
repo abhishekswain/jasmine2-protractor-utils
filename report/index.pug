@@ -1,0 +1,236 @@
+doctype html
+html(ng-app='reporter')
+    head
+        meta(charset='utf-8')
+        title Protractor screenshot reporter
+
+        script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js')
+
+        link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', integrity='sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u', crossorigin='anonymous')
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.1.4/ui-bootstrap.min.js')
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.1.4/ui-bootstrap-tpls.min.js')
+
+        link(href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css", rel="stylesheet", integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1", crossorigin="anonymous")
+
+        script(type='text/javascript').
+            var app = angular.module('reporter', ['ui.bootstrap']);
+            app.controller('tests', function($scope) {
+            $scope.show = 'failed';
+            $scope.showBody = false;
+            $scope.showPassed = false;
+            $scope.showFailed = false;
+            $scope.showStack = true;
+            });
+
+    body(ng-controller='tests', ng-init!='data = ' + data)
+        .container
+            .jumbotron
+                h1 Protractor screeenshot report
+                p 
+                    span.pull-left Total tests 
+                        strong {{data.tests.length}}
+                    span.pull-right 
+                        i.fa.fa-clock-o
+                        |   
+                        span Generated on 
+                        strong {{data.generatedOn | date:'medium'}}
+            .row
+                .col-md-12
+                    h4 Filtering
+                .col-md-10.col-sm-12
+                    .btn-toolbar
+                        .btn-group
+                            label.btn.btn-success(ng-model="show" uib-btn-radio="'passed'") 
+                                i.fa.fa-check
+                                |  
+                                span Passed
+
+                            label.btn.btn-danger(ng-model="show" uib-btn-radio="'failed'")
+                                i.fa.fa-close
+                                |   
+                                span Failed
+
+
+                            label.btn.btn-info(ng-model="show" uib-btn-radio="'pending'") 
+                                i.fa.fa-pencil
+                                |   
+                                span Pending
+
+                            label.btn.btn-default(ng-model="show" uib-btn-radio="'disabled'") 
+                                i.fa.fa-ban
+                                |   
+                                span Disabled 
+
+                        .btn-group
+                            label.btn.btn-info(ng-model="showBody" uib-btn-checkbox) 
+                                i.fa(ng-class='showBody ? "fa-toggle-on" : "fa-toggle-off"')
+                                |  
+                                span Expand
+
+                        .btn-group
+                            label.btn.btn-success(ng-model="showPassed" uib-btn-checkbox) 
+                                i.fa(ng-class='showPassed ? "fa-toggle-on" : "fa-toggle-off"')
+                                |  
+                                span Show passed
+
+                            label.btn.btn-danger(ng-model="showFailed" uib-btn-checkbox) 
+                                i.fa(ng-class='showFailed ? "fa-toggle-on" : "fa-toggle-off"')
+                                |  
+                                span Show failed 
+
+                        .btn-group
+                            label.btn.btn-warning(ng-model="showStack" uib-btn-checkbox) 
+                                i.fa(ng-class='showStack ? "fa-toggle-on" : "fa-toggle-off"')
+                                |  
+                                span Show stack 
+                .col-md-2.col-sm-12
+                    .pull-right 
+                        span Showing
+                        |   
+                        strong {{filtered.length}}
+                        |   
+                        span {{show}}
+                .col-md-12
+                    p
+                        hr
+                .col-md-12(ng-repeat='test in data.tests | filter:{status:show} as filtered')
+                    .panel(ng-class='{"panel-danger": test.status === "failed", "panel-success": test.status == "passed", "panel-default": test.status == "disabled", "panel-info": test.status == "pending" }') 
+                        .panel-heading
+                            h3(ng-model="showBody" uib-btn-checkbox)
+                                i.fa(ng-class='{"fa-close": test.status === "failed", "fa-check": test.status == "passed", "fa-pencil": test.status == "pending", "fa-ban": test.status == "disabled" }')
+                                |  
+                                span {{test.description}} 
+                                |  
+                                small ({{$index+1}})
+                                |  
+                                small.pull-right {{test.duration}}
+                            span {{test.pendingReason}}
+                            span {{test.failedExpectations[0].message | limitTo:150}}
+                        .panel-footer(ng-if='showBody')
+                            .row
+                                .col-md-6.text-success 
+                                    i.fa.fa-check
+                                    |  
+                                    span Passed 
+                                    |  
+                                    strong {{test.passedExpectations.length}}
+                                    |  
+                                    label.btn.btn-xs.btn-success(ng-model="showPassed" uib-btn-checkbox) 
+                                        span Show passed
+                                        |  
+                                        i.fa(ng-class='showPassed ? "fa-toggle-on" : "fa-toggle-off"')
+
+                                .col-md-6.text-danger
+                                    .pull-right
+                                        i.fa.fa-exclamation
+                                        |  
+                                        span Failed 
+                                        |  
+                                        strong {{test.failedExpectations.length}}
+                                        |  
+                                        label.btn.btn-xs.btn-danger(ng-model="showFailed" uib-btn-checkbox) 
+                                            span Show failed 
+                                            |  
+                                            i.fa(ng-class='showFailed ? "fa-toggle-on" : "fa-toggle-off"')  
+
+                        .panel-body(ng-if='showBody') 
+                            p.lead {{test.fullName}}
+                            .row(ng-if='showPassed && test.passedExpectations.length > 0')
+                                .col-md-12
+                                    h3 Passed Expectations
+                                .col-md-12(ng-repeat='exp in test.passedExpectations')
+                                    .well
+                                        h4.text-success 
+                                            i.fa.fa-check
+                                            |  
+                                            i Actual 
+                                            |     
+                                            strong {{exp.actual}}
+                                            |     
+                                            strong 
+                                                i {{exp.matcherName}}
+                                            |     
+                                            i Expected 
+                                            |     
+                                            strong {{exp.expected}}
+                                            |     
+                                            i =
+                                            |     
+                                            strong {{exp.message}}
+                                            |  
+                                            span.pull-right.text-info
+                                                i.fa.fa-clock-o
+                                                |  
+                                                strong {{exp.when | date:'H:mm:ss:sss'}} 
+                                        .row
+                                            .col-xs-12.col-sm-6.col-md-6.col-lg-6(ng-repeat='s in exp.screenshots')
+                                                .thumbnail
+                                                    .caption.text-center
+                                                        h4(title='Browser name') {{s.browser}}
+                                                    a(href='{{s.img}}')
+                                                        img(ng-src='{{s.img}}' title='{{s.when | date:"mediumTime"}}')
+
+                            .row(ng-if='showFailed && test.failedExpectations.length > 0')
+                                .col-md-12
+                                    h3 Failed Expectations
+                                .col-md-12(ng-repeat='exp in test.failedExpectations')
+                                    .well
+                                        h4.text-danger 
+                                            i.fa.fa-exclamation
+                                            |  
+                                            span {{exp.message}}
+                                            |  
+                                            span.pull-right.text-info
+                                                i.fa.fa-clock-o
+                                                |  
+                                                strong {{exp.when | date:'H:mm:ss:sss'}} 
+                                        .row
+                                            .col-xs-12.col-sm-6.col-md-6.col-lg-6(ng-repeat='s in exp.screenshots')
+                                                .thumbnail
+                                                    .caption.text-center
+                                                        h4(title='Browser name') {{s.browser}}
+                                                    a(href='{{s.img}}')
+                                                        img(ng-src='{{s.img}}' title='{{s.when | date:"mediumTime"}}')
+
+                                        button.btn.btn-warning(ng-model="showStack" uib-btn-checkbox) 
+                                            i.fa.fa-stack-overflow
+                                            | 
+                                            span Show stack
+                                        p
+                                            pre.text-danger(ng-if='showStack')
+                                                code {{exp.stack}}
+
+                            .row(ng-if='(showFailed || showPassed) && test.specScreenshots.length > 0')
+                                .col-md-12
+                                    h3 After Spec Screenshots
+                                    p {{test.message}}
+                                .col-xs-12.col-sm-6.col-md-6.col-lg-6(ng-repeat='s in test.specScreenshots')
+                                    .thumbnail
+                                        .caption.text-center
+                                            h4(title='Browser name') {{s.browser}} 
+                                                small(title='when the screenshot was taken') {{s.when | date:'mediumTime'}}
+                                        a(href='{{s.img}}')
+                                            img(ng-src='{{s.img}}' title='{{s.when | date:"mediumTime"}}')
+
+                        .panel-footer(ng-if='showBody && (showPassed || showFailed)')
+                            .row
+                                .col-md-3
+                                    span Start
+                                    | 
+                                    strong {{test.start | date:'mediumTime'}}
+                                .col-md-3
+                                    .text-center
+                                        span End
+                                        |  
+                                        strong {{test.end | date:'mediumTime'}}
+                                .col-md-3
+                                    .text-center
+                                        span Jasmine Timeout
+                                        | 
+                                        strong {{test.timeout}} ms 
+
+                                .col-md-3
+                                    .pull-right
+                                        span Elapsed Time
+                                        | 
+                                        strong {{test.diff}} ms 
