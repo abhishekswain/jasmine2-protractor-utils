@@ -20,7 +20,24 @@ html(ng-app='reporter')
             $scope.showPassed = false;
             $scope.showFailed = false;
             $scope.showStack = true;
+            $scope.showLogs = true;
+            $scope.logLevel = function(log){
+            switch (log.level.toUpperCase()) {
+            case 'INFO':
+            return 'text-info';
+            case 'WARNING':
+            return 'text-warning';
+            case 'SEVERE':
+            case 'ERROR':
+            return 'text-danger';
+            break;
+            case 'DEBUG':
+            return 'text-muted';
+            default:
+            return '';
+            }}
             });
+        
 
     body(ng-controller='tests', ng-init!='data = ' + data)
         .container
@@ -83,6 +100,12 @@ html(ng-app='reporter')
                                 i.fa(ng-class='showStack ? "fa-toggle-on" : "fa-toggle-off"')
                                 |  
                                 span Show stack 
+
+                            label.btn.btn-default(ng-model="showLogs" uib-btn-checkbox) 
+                                i.fa(ng-class='showLogs ? "fa-toggle-on" : "fa-toggle-off"')
+                                |  
+                                span Show logs 
+
                 .col-md-2.col-sm-12
                     .pull-right 
                         span Showing
@@ -170,6 +193,27 @@ html(ng-app='reporter')
                                                     a(href='{{s.img}}')
                                                         img(ng-src='{{s.img}}' title='{{s.when | date:"mediumTime"}}')
 
+                                        div(ng-if='showLogs && exp.logs.length>0')    
+                                            h5 Browsers logs
+                                            .row
+                                                .col-xs-12.col-sm-6.col-md-6.col-lg-6(ng-repeat='i in exp.logs')
+                                                    .text-center
+                                                        h4(title='Browser name') {{i.browser}}
+                                                    ul
+                                                        li(ng-repeat='log in i.logs')
+                                                            span(ng-class='logLevel(log)')
+                                                                strong {{log.level}}
+                                                                |  
+                                                                span {{log.timestamp | date:'shortTime'}}
+                                                                |  
+                                                                span {{log.message}}
+                                                                |  
+                                                                button.btn.btn-info(ng-model="more" uib-btn-checkbox) 
+                                                                    i.fa.fa-plus
+                                                                    | 
+                                                                    span More
+
+                                                                code(ng-if='more').text-muted {{log}}
                             .row(ng-if='showFailed && test.failedExpectations.length > 0')
                                 .col-md-12
                                     h3 Failed Expectations
@@ -196,13 +240,38 @@ html(ng-app='reporter')
                                             i.fa.fa-stack-overflow
                                             | 
                                             span Show stack
-                                        p
-                                            pre.text-danger(ng-if='showStack')
-                                                code {{exp.stack}}
+
+                                        div(ng-if='showStack')
+                                            p
+                                                h5 Protractor's log:
+                                                pre.text-danger
+                                                    code {{exp.stack}}
+
+                                        div(ng-if='showLogs && exp.logs.length>0')    
+                                            h5 Browsers logs
+                                            .row
+                                                .col-xs-12.col-sm-6.col-md-6.col-lg-6(ng-repeat='i in exp.logs')
+                                                    .text-center
+                                                        h4(title='Browser name') {{i.browser}}
+                                                    ul
+                                                        li(ng-repeat='log in i.logs')
+                                                            span(ng-class='logLevel(log)')
+                                                                strong {{log.level}}
+                                                                |  
+                                                                span {{log.timestamp | date:'shortTime'}}
+                                                                |  
+                                                                span {{log.message}}
+                                                                |  
+                                                                button.btn.btn-info(ng-model="more" uib-btn-checkbox) 
+                                                                    i.fa.fa-plus
+                                                                    | 
+                                                                    span More
+
+                                                                code(ng-if='more').text-muted {{log}}
 
                             .row(ng-if='(showFailed || showPassed) && test.specScreenshots.length > 0')
                                 .col-md-12
-                                    h3 After Spec Screenshots
+                                    h3 Spec Screenshots
                                     p {{test.message}}
                                 .col-xs-12.col-sm-6.col-md-6.col-lg-6(ng-repeat='s in test.specScreenshots')
                                     .thumbnail
@@ -211,6 +280,28 @@ html(ng-app='reporter')
                                                 small(title='when the screenshot was taken') {{s.when | date:'mediumTime'}}
                                         a(href='{{s.img}}')
                                             img(ng-src='{{s.img}}' title='{{s.when | date:"mediumTime"}}')
+                            .row(ng-if='test.specLogs.length > 0')
+                                .col-md-12(ng-if='showLogs')
+                                    h5 Browsers logs
+                                    .row
+                                        .col-xs-12.col-sm-6.col-md-6.col-lg-6(ng-repeat='i in exp.logs')
+                                            .text-center
+                                                h4(title='Browser name') {{i.browser}}
+                                            ul
+                                                li(ng-repeat='log in i.logs')
+                                                    span(ng-class='logLevel(log)')
+                                                        strong {{log.level}}
+                                                        |  
+                                                        span {{log.timestamp | date:'shortTime'}}
+                                                        |  
+                                                        span {{log.message}}
+                                                        |  
+                                                        button.btn.btn-info(ng-model="more" uib-btn-checkbox) 
+                                                            i.fa.fa-plus
+                                                            | 
+                                                            span More
+
+                                                        code(ng-if='more').text-muted {{log}}
 
                         .panel-footer(ng-if='showBody && (showPassed || showFailed)')
                             .row

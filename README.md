@@ -11,7 +11,7 @@ Utilities for Protractor with jasmine2 [Screenshot, Browser Console log and more
 2. It can take screenshots for each spec failure / success as well
 3. It can fail your spec/test if the main browser console has errors
 4. It can generate beautiful angular+bootstrap HTML reports
-5. TODO: It can output browser console logs on failure(Done) or always(TODO) :)
+5. It can output for each browser instance console logs
 
 
 
@@ -68,8 +68,6 @@ to reset screenshotBrowsers from your previous spec use this code
   });
 ```
 
-Note: failTestOnErrorLog feature is not implemented to support multiple browsers
-
 Add this plugin to the protractor config file:
 ```js
 exports.config = {
@@ -77,6 +75,7 @@ exports.config = {
        package: 'jasmine2-protractor-utils',
        screenshotOnExpect: {String}    (Default - 'failure+success', 'failure', 'none'),
        screenshotOnSpec: {String}    (Default - 'failure+success', 'failure', 'none'),
+       withLogs: {Boolean}      (Default - true),
        htmlReport: {Boolean}      (Default - true),
        screenshotPath: {String}                (Default - 'reports/screenshots')
        clearFoldersBeforeTest: {Boolean}       (Default - false),
@@ -131,6 +130,17 @@ Takes from each browser instance stored in global.screenshotBrowsers screenshots
 
 Default: 'failure'
 Valid Options: 'failure+success'/'failure'/'none'
+
+## withLogs
+
+ If set to 'true', capture from chrome all logs after each expect or spec
+
+ *NOTE: This works only on chrome!*
+
+ Default: 'true'
+ Valid Options: true/false
+
+In order to make chrome' console works properly, you need modify your ``protractor.conf`` as follows  https://github.com/webdriverio/webdriverio/issues/491#issuecomment-95510796
 
 
 ## screenshotPath

@@ -19,6 +19,7 @@ var moment = require('moment');
  *      package: 'jasmine2-protractor-utils',
  *      screenshotOnExpect: {String}    (Default - 'failure+success', 'failure', 'none'),
  *      screenshotOnSpec: {String}    (Default - 'failure+success', 'failure', 'none'),
+ *      withLogs: {Boolean}       (Default - true),
  *      htmlReport: {Boolean}      (Default - true),
  *      screenshotPath: {String}                (Default - 'reports/screenshots')
  *      clearFoldersBeforeTest: {Boolean}       (Default - false),
@@ -33,6 +34,16 @@ var moment = require('moment');
  *    @created December 01 2015
  */
 var protractorUtil = function() {};
+
+protractorUtil.forEachBrowser = function(action) {
+    if (global.screenshotBrowsers && Object.keys(global.screenshotBrowsers).length > 0) {
+        _.forOwn(global.screenshotBrowsers, function(instance, name) {
+            action(instance, name);
+        });
+    } else {
+        action(global.browser, 'default');
+    }
+}
 
 protractorUtil.takeScreenshot = function(config, context, report) {
 
@@ -50,17 +61,30 @@ protractorUtil.takeScreenshot = function(config, context, report) {
             console.log('Error while taking screenshot - ' + err.message);
         });
     }
-    if (global.screenshotBrowsers && Object.keys(global.screenshotBrowsers).length > 0) {
-        _.forOwn(global.screenshotBrowsers, function(instance, name) {
-            takeInstanceScreenshot(instance, name);
-        });
-    } else {
-        takeInstanceScreenshot(global.browser, 'default');
+
+    protractorUtil.forEachBrowser(takeInstanceScreenshot);
+}
+
+protractorUtil.takeLogs = function(config, context, report) {
+
+    function takeLog(browserInstance, browserName) {
+        console.log('Taking logs from browser instance ' + browserName);
+        try {
+            browserInstance.manage().logs().get('browser').then(function(browserLogs) {
+                if (browserLogs && browserLogs.length > 0) {
+                    report(browserLogs, browserName)
+                }
+            });
+        } catch (err) {
+            console.log('Error while taking logs - ' + err);
+        }
     }
+
+    protractorUtil.forEachBrowser(takeLog);
 }
 
 /**
- * Takes a screenshot for each expect/matcher failure
+ * Takes a screenshot for each expect/matcher
  *
  * @param {Object} context The plugin context object
  * @return {!webdriver.promise.Promise.<R>} A promise
@@ -73,7 +97,9 @@ protractorUtil.takeScreenshotOnExpectDone = function(context) {
             var self = this;
 
             expectation.screenshots = [];
+            expectation.logs = [];
             expectation.when = new Date();
+
             var makeScreenshotsFromEachBrowsers = false;
             if (passed) {
                 protractorUtil.test.passedExpectations.push(expectation);
@@ -88,6 +114,14 @@ protractorUtil.takeScreenshotOnExpectDone = function(context) {
                         img: file,
                         browser: browserName,
                         when: new Date()
+                    });
+                });
+            }
+            if (context.config.withLogs) {
+                protractorUtil.takeLogs(config, context, function(logs, browserName) {
+                    expectation.logs.push({
+                        logs: logs,
+                        browser: browserName
                     });
                 });
             }
@@ -123,6 +157,14 @@ protractorUtil.takeScreenshotOnSpecDone = function(context) {
                                 img: file,
                                 browser: browserName,
                                 when: new Date()
+                            });
+                        });
+                    }
+                    if (context.config.withLogs) {
+                        protractorUtil.takeLogs(config, context, function(logs, browserName) {
+                            protractorUtil.test.specLogs.push({
+                                logs: logs,
+                                browser: browserName
                             });
                         });
                     }
@@ -166,6 +208,7 @@ protractorUtil.generateHTMLReport = function(context) {
                     protractorUtil.test = {
                         start: moment(),
                         specScreenshots: [],
+                        specLogs: [],
                         failedExpectations: [],
                         passedExpectations: []
                     };
@@ -278,9 +321,14 @@ protractorUtil.prototype.setup = function() {
     } else {
         protractorUtil.test = {
             specScreenshots: [],
+            specLogs: [],
             failedExpectations: [],
             passedExpectations: []
         };
+    }
+
+    if (this.config.withLogs == undefined) {
+        this.config.withLogs = true;
     }
 
     if (this.config.screenshotOnExpect == undefined) {
