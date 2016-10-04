@@ -7,62 +7,24 @@
 # jasmine2-protractor-utils
 Utilities for Protractor with jasmine2 [Screenshot, Browser Console log and more]
 
-1. This plugin can take a screenshot for each Jasmine2 expect failure
-2. It can take screenshot for each spec failure as well
-3. It can fail your spec/test if browser console has errors
-4. It can generate beautiful readable HTML reports
+1. This plugin can take screenshots for each Jasmine2 expect success/failure on *multiple browsers instances* at once.
+2. It can take screenshots for each spec failure / success as well
+3. It can fail your spec/test if the main browser console has errors
+4. It can generate beautiful angular+bootstrap HTML reports
 5. TODO: It can output browser console logs on failure(Done) or always(TODO) :)
 
-# Usage
 
-## How to install
+
+# How to install
 
 npm install jasmine2-protractor-utils -g
 
 *To install a particular version:* npm install jasmine2-protractor-utils@version
 
+# Usage
 
-Add this plugin to the protractor config file:
-```js
-exports.config = {
-      plugins: [{
-        package: 'jasmine2-protractor-utils',
-        disableHTMLReport: {Boolean},
-        disableScreenshot: {Boolean},
-        screenshotOnExpectFailure: {Boolean}    (Default - false),
-        screenshotOnSpecFailure: {Boolean}      (Default - false),
-        screenshotPath: {String}                (Default - 'reports/screenshots')
-        clearFoldersBeforeTest: {Boolean}       (Default - false),
-        htmlReportDir:  {String}                (Default - './reports/htmlReports')
-        failTestOnErrorLog: {
-                    failTestOnErrorLogLevel: {Number},  (Default - 900)
-                    excludeKeywords: {A JSON Array}
-                }
-      }]
-    };
-```
-
-Example:
-
-```js
-exports.config = {
-      plugins: [{
-        package: 'jasmine2-protractor-utils',
-        disableHTMLReport: false,
-        disableScreenshot: false,
-        screenshotPath:'./reports/screenshots',
-        screenshotOnExpectFailure:true,
-        screenshotOnSpecFailure:true,
-        clearFoldersBeforeTest: true,
-        htmlReportDir: './reports/htmlReports',
-        failTestOnErrorLog: {
-                    failTestOnErrorLogLevel: 900,
-                    excludeKeywords: ['keyword1', 'keyword2']
-                }
-      }]
-    };
-```
-
+## Single browser app
+No need to setup anything special to make screenshots.
 
 **Please Note**
 
@@ -79,39 +41,96 @@ If not present , please add the following to the config file:
         }
 ```
 
+## Multi browser chat alike app
+
+In order to use multi-browser chat alike testing, you need to keep a track of all browser instances by yourself:
+
+You can do it like this
+```
+var a  = browser.forkNewInstance();
+var b  = browser.forkNewInstance();
+
+global.screenshotBrowsers['anyCustomNameOfBrowserDisplayedInReports'] = a;
+global.screenshotBrowsers.userB = b;
+```
+
+if you close the browser, remove it also from global.screenshotBrowsers
+After closing browser making screenshots wont' work. Make sense, right no browser no screenshot.
+```
+delete global.screenshotBrowsers.userB;
+```
+
+to reset screenshotBrowsers from your previous spec use this code
+
+```
+  beforeAll(function() {
+    global.screenshotBrowsers = {};
+  });
+```
+
+Note: failTestOnErrorLog feature is not implemented to support multiple browsers
+
+Add this plugin to the protractor config file:
+```js
+exports.config = {
+       plugins: [{
+       package: 'jasmine2-protractor-utils',
+       screenshotOnExpect: {String}    (Default - 'failure+success', 'failure', 'none'),
+       screenshotOnSpec: {String}    (Default - 'failure+success', 'failure', 'none'),
+       htmlReport: {Boolean}      (Default - true),
+       screenshotPath: {String}                (Default - 'reports/screenshots')
+       clearFoldersBeforeTest: {Boolean}       (Default - false),
+       failTestOnErrorLog: {
+                failTestOnErrorLogLevel: {Number},  (Default - 900)
+                excludeKeywords: {A JSON Array}
+           }
+        }]
+     };
+```
+
+Example:
+
+```js
+exports.config = {
+      plugins: [{
+        package: 'jasmine2-protractor-utils',
+        screenshotPath:'./REPORTS/e2e',
+        screenshotOnExpect: 'failure+success',
+        screenshotOnSpec: 'failure',
+        clearFoldersBeforeTest: true,
+      }]
+    };
+```
+
 ## package
 
  This is the plugin package name , same as of npm module name for the plugin , 'jasmine2-protractor-utils' usually and preferably
 
 
-## disableHTMLReport
+## htmlReport
 
- If set to 'true', disables HTML report generation.
+ If set to 'false', disables HTML report generation.
 
+ *NOTE: This tool doesn't really make sense to use without the reports.*
+
+ Default: 'true'
  Valid Options: true/false
 
 
-## disableScreenshot
+## screenshotOnExpect
 
- If set to 'true' , disables screenshot generation.
+ Takes from each browser instance stored in global.screenshotBrowsers screenshots for each Jasmine2 expect failure or success,  depending on value.
 
- Valid Options: true/false
-
-
-## screenshotOnExpectFailure
-
- Takes a screenshot for each Jasmine2 expect failure, is set true.
- Screenshot will be taken in 'png' format and file name would be: description+spec description+index.png
-
- Default: false
+ Default: 'failure+success'
+ Valid Options: 'failure+success'/'failure'/'none'
 
 
-## screenshotOnSpecFailure
+## screenshotOnSpec
 
- Take screenshot for each spec failure , if set to true.
- Screenshot will be taken in 'png' format and file name would be: description+spec description.png
+Takes from each browser instance stored in global.screenshotBrowsers screenshots for each Jasmine2 spec failure or success,  depending on value.
 
- Default: false
+Default: 'failure'
+Valid Options: 'failure+success'/'failure'/'none'
 
 
 ## screenshotPath
@@ -127,16 +146,7 @@ If not present , please add the following to the config file:
 
  Default: false
 
-## htmlReportDir
-
- Path where HTML report will be saved. If path does not exist , will be created.
- e.g './reports/something/savehere/'
-
- If you want to use the default location , never mention 'htmlReportDir' with the plug in configuration. Where as 'disableHTMLReport' must be set to false.
-
- Default: 'reports/htmlReports'
-
-## failTestOnErrorLog (Chrome only)
+## failTestOnErrorLog (Chrome only, single browser usage only)
 
 Contains a set of configuration for console log. When browser console has errors of a certain log level (default:>900), the spec/test is marked failed along with log in the error report/stacktrace.
 

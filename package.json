@@ -1,7 +1,7 @@
 {
   "name": "jasmine2-protractor-utils",
-  "version": "1.2.8",
-  "description": "Utilities for Protractor with jasmine2 [HTML Reports, Screenshot, Browser Console log and more]",
+  "version": "2.0.0",
+  "description": "Utilities for Protractor with jasmine2 [HTML Reports, Multi-Browser Screenshots, Browser Console log and more]",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,6 +15,8 @@
     "Protractor",
     "Protractor html report",
     "Jasmine html report",
+    "protractor multi-browser screenshots",
+    "protract chat alike screenshots",
     "html reporter Protractor",
     "protractor-screenshot",
     "screenshot-on-failure",
@@ -22,7 +24,7 @@
     "browser-console-log",
     "protractor-spec-fail-on-console-error"
   ],
-  "author": "Abhishek Swain",
+  "author": ["Abhishek Swain","Andrej Zachar"],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/abhishekswain/jasmine2-protractor-utils/issues"
