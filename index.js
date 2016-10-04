@@ -222,7 +222,7 @@ protractorUtil.failTestOnErrorLog = function(context) {
             /*
              * Verifies that console has no error logs, if error log is there test is marked as failure
              */
-            global.browser.manage().logs().get('browser').then(function(browserLogs) {
+            function verifyConsole(browserLogs, browserName) {
 
                 // browserLogs is an array of objects with level and message fields
                 if (browserLogs) {
@@ -237,11 +237,13 @@ protractorUtil.failTestOnErrorLog = function(context) {
                                     }
                                 });
                             }
-                            expect(log.level.value > logLevel && flag).toEqualBecause(true, 'Error logs present in console:' + require('util').inspect(log));
+                            expect(log.level.value > logLevel && flag).toEqualBecause(true, 'Browser instance ' + browserName + ': Error logs present in console:' + require('util').inspect(log));
                         }
                     });
                 }
-            });
+            }
+
+            protractorUtil.takeLogs(config, context, verifyConsole);
         });
     });
 };
