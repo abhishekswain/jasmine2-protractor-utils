@@ -36,21 +36,21 @@ var protractorUtil = function() {};
 
 protractorUtil.takeScreenshot = function(config, context, report) {
 
-    function takeInstanceScreenshot(browserInstance, name) {
-        var fileName = uuid.v1() + '.png';
-        console.log('Taking screenshot ' + fileName + ' from browser instance ' + name);
-        var finalFile = context.config.screenshotPath + '/' + fileName;
+    function takeInstanceScreenshot(browserInstance, browserName) {
+        var screenshotFile = 'screenshots/' + uuid.v1() + '.png';
+        console.log('Taking screenshot ' + screenshotFile + ' from browser instance ' + browserName);
+        var finalFile = context.config.screenshotPath + '/' + screenshotFile;
 
         browserInstance.takeScreenshot().then(function(png) {
             var stream = fs.createWriteStream(finalFile);
             stream.write(new Buffer(png, 'base64'));
             stream.end();
-            report(fileName, name);
+            report(screenshotFile, browserName);
         }, function(err) {
             console.log('Error while taking screenshot - ' + err.message);
         });
     }
-    if (Object.keys(global.screenshotBrowsers).length > 0) {
+    if (global.screenshotBrowsers && Object.keys(global.screenshotBrowsers).length > 0) {
         _.forOwn(global.screenshotBrowsers, function(instance, name) {
             takeInstanceScreenshot(instance, name);
         });
@@ -175,7 +175,7 @@ protractorUtil.generateHTMLReport = function(context) {
                     //calculate diff
                     protractorUtil.test.end = moment();
                     protractorUtil.test.diff = protractorUtil.test.end.diff(protractorUtil.test.start, 'ms');
-                    protractorUtil.test.timeout =  jasmine.DEFAULT_TIMEOUT_INTERVAL;
+                    protractorUtil.test.timeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 
                     _.merge(protractorUtil.test, result);
                     protractorUtil.writeReport(context, protractorUtil.testResults);
@@ -254,7 +254,7 @@ protractorUtil.prototype.setup = function() {
     var self = this;
 
     if (!this.config.screenshotPath) {
-        this.config.screenshotPath = './reports/screenshots';
+        this.config.screenshotPath = './reports/e2e';
     }
 
     if (this.config.clearFoldersBeforeTest) {
@@ -265,7 +265,7 @@ protractorUtil.prototype.setup = function() {
         }
     }
 
-    mkdirp.sync(this.config.screenshotPath, function(err) {
+    mkdirp.sync(this.config.screenshotPath + '/screenshots', function(err) {
         if (err) console.error(err);
         else console.log(self.config.screenshotPath + ' folder created!');
     });
