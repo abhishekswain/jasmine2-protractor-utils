@@ -4,22 +4,22 @@
 [![npm](https://img.shields.io/npm/v/jasmine2-protractor-utils.svg?style=flat-square)](https://www.npmjs.com/package/jasmine2-protractor-utils)
 [![npm](https://img.shields.io/npm/l/jasmine2-protractor-utils.svg?style=flat-square)](https://www.npmjs.com/package/jasmine2-protractor-utils)
 
-# jasmine2-protractor-utils
-Utilities for Protractor with jasmine2 [Screenshot, Browser Console log and more]
+# azachar/jasmine2-protractor-utils
+A fork of Utilities for Protractor with jasmine2 [Screenshot, Browser Console log and more] that comes with a beutifull dynamic angular reporter for chat alike apps.
 
 1. This plugin can take screenshots for each Jasmine2 expect success/failure on *multiple browsers instances* at once.
 2. It can take screenshots for each spec failure / success as well
 3. It can fail your spec/test if the main browser console has errors
-4. It can generate beautiful angular+bootstrap HTML reports
+4. It can generate beautiful angular+bootstrap HTML reports with active filtering to easy find out why your tests are failing
 5. It can output for each browser instance console logs
 
 
 
 # How to install
 
-npm install jasmine2-protractor-utils -g
+Please note that this fork is experimental but ready to serve the purpose.
 
-*To install a particular version:* npm install jasmine2-protractor-utils@version
+npm install azachar/jasmine2-protractor-utils#fea-instance-screenshots -g
 
 # Usage
 
@@ -77,7 +77,7 @@ exports.config = {
        screenshotOnSpec: {String}    (Default - 'failure+success', 'failure', 'none'),
        withLogs: {Boolean}      (Default - true),
        htmlReport: {Boolean}      (Default - true),
-       screenshotPath: {String}                (Default - 'reports/screenshots')
+       screenshotPath: {String}                (Default - '<reports/e2e>/screenshots')
        clearFoldersBeforeTest: {Boolean}       (Default - false),
        failTestOnErrorLog: {
                 failTestOnErrorLogLevel: {Number},  (Default - 900)
@@ -148,7 +148,9 @@ In order to make chrome' console works properly, you need modify your ``protract
  Path where screenshots will be saved. If path does not exist , will be created.
  e.g './reports/something/savehere/' , please take care of './' and '/' at the beginning and end.
 
- Default: 'reports/screenshots'
+ Please note that due to html reporter sugar, the final path always contains ``+'/screenshots'``
+
+ Default: 'reports/e2e/screenshots'
 
 ## clearFoldersBeforeTest
 
@@ -156,7 +158,7 @@ In order to make chrome' console works properly, you need modify your ``protract
 
  Default: false
 
-## failTestOnErrorLog (Chrome only, single browser usage only)
+## failTestOnErrorLog (Chrome only)
 
 Contains a set of configuration for console log. When browser console has errors of a certain log level (default:>900), the spec/test is marked failed along with log in the error report/stacktrace.
 
@@ -174,5 +176,6 @@ Please do not specify this flag , if you don't supply any such keywords.
 
 
 ## TODO
-
-It can output browser console logs on failure(done) or always(TODO) :)
+1. Convert to typescript based es6 npm plugin.
+2. Provide tests, sample testapp, e2e test for reporter
+3. Support for mocha framework
