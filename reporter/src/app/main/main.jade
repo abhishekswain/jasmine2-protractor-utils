@@ -1,0 +1,118 @@
+.container
+  .jumbotron
+    h1 Protractor screeenshot report
+    p 
+      span.pull-left Total tests 
+        strong {{main.data.tests.length}}
+      span.pull-right 
+        i.fa.fa-clock-o
+        |   
+        span Generated on 
+        strong {{main.data.generatedOn | date:'medium'}}
+  .row
+    .col-md-12
+      h4 Filtering
+    .col-md-10.col-sm-12
+      .btn-toolbar
+        .btn-group
+          label.btn.btn-primary(ng-model="main.show" uib-btn-radio="") 
+            i.fa.fa-bars
+            |  
+            span All
+        .btn-group  
+          label.btn.btn-success(ng-model="main.show" uib-btn-radio="'passed'") 
+            i.fa.fa-check
+            |  
+            span Passed
+
+          label.btn.btn-danger(ng-model="main.show" uib-btn-radio="'failed'")
+            i.fa.fa-close
+            |   
+            span Failed
+
+
+          label.btn.btn-info(ng-model="main.show" uib-btn-radio="'pending'") 
+            i.fa.fa-pencil
+            |   
+            span Pending
+
+          label.btn.btn-default(ng-model="main.show" uib-btn-radio="'disabled'") 
+            i.fa.fa-ban
+            |   
+            span Disabled 
+
+    .col-md-2.col-sm-12
+      .pull-right 
+        span Showing
+        |   
+        strong {{filtered.length}}
+        |   
+        span {{main.show}}
+    .col-md-12
+      p
+        .btn-toolbar
+          .btn-group
+            label.btn.btn-sm.btn-info(ng-model="main.expand" uib-btn-checkbox) 
+              i.fa(ng-class='main.expand ? "fa-toggle-on" : "fa-toggle-off"')
+              |  
+              span Expand all
+              
+            
+          .btn-group
+            label.btn.btn-sm.btn-primary(ng-model="main.showScreenshots" uib-btn-checkbox) 
+              i.fa(ng-class='main.showScreenshots ? "fa-toggle-on" : "fa-toggle-off"')
+              |  
+              span Show screenshots
+              
+            label.btn.btn-sm.btn-success(ng-model="main.showPassed" uib-btn-checkbox) 
+              i.fa(ng-class='main.showPassed ? "fa-toggle-on" : "fa-toggle-off"')
+              |  
+              span Show passed expectations
+
+            label.btn.btn-sm.btn-danger(ng-model="main.showFailed" uib-btn-checkbox) 
+              i.fa(ng-class='main.showFailed ? "fa-toggle-on" : "fa-toggle-off"')
+              |  
+              span Show failed expectations
+
+          .btn-group
+            label.btn.btn-sm.btn-default(ng-model="main.showSpecScreenshots" uib-btn-checkbox) 
+              i.fa(ng-class='main.showSpecScreenshots ? "fa-toggle-on" : "fa-toggle-off"')
+              |  
+              span Show after spec done screenshots
+      p
+        hr
+      p
+        .btn-toolbar
+          .btn-group
+            label.btn.btn-xs.btn-warning(ng-model="main.showStack" uib-btn-checkbox) 
+              i.fa(ng-class='main.showStack ? "fa-toggle-on" : "fa-toggle-off"')
+              |  
+              span Show protractor stack 
+
+            label.btn.btn-xs.btn-default(ng-model="main.showLogs" uib-btn-checkbox) 
+              i.fa(ng-class='main.showLogs ? "fa-toggle-on" : "fa-toggle-off"')
+              |  
+              span Show browsers logs
+          .btn-group
+            label.btn.btn-xs.btn-success(ng-model="main.logFilter"  ng-disabled='!main.showLogs' uib-btn-radio="")  
+              span All
+          .btn-group
+            label.btn.btn-xs.btn-default(ng-model="main.logFilter" ng-disabled='!main.showLogs' uib-btn-radio="'DEBUG'")  
+              span Debug
+
+            label.btn.btn-xs.btn-info(ng-model="main.logFilter" ng-disabled='!main.showLogs' uib-btn-radio="'INFO'")  
+              span Info
+
+            label.btn.btn-xs.btn-warning(ng-model="main.logFilter" ng-disabled='!main.showLogs' uib-btn-radio="'WARN'")  
+              span Warning
+
+            label.btn.btn-xs.btn-danger(ng-model="main.logFilter" ng-disabled='!main.showLogs' uib-btn-radio="'SEVERE'")  
+              span Severe
+
+            label.btn.btn-xs.btn-danger(ng-model="main.logFilter" ng-disabled='!main.showLogs' uib-btn-radio="'ERROR'")  
+              span Error
+      p
+        hr
+
+    .col-md-12(ng-repeat='t in main.data.tests | filter:{status:main.show} as filtered')
+      spec(test='t' expand='main.expand' show-screenshots='main.showScreenshots' log-filter='main.logFilter' show-spec-screenshots='main.showSpecScreenshots' show-passed='main.showPassed' show-failed='main.showFailed' show-logs='main.showLogs' show-stack='main.showStack')

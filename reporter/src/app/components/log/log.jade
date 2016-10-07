@@ -1,0 +1,45 @@
+div(ng-if='$ctrl.model.length>0') 
+  button.btn.btn-warning(ng-model="$ctrl.showLogs" uib-btn-checkbox) 
+    i.fa.fa-stack-overflow
+    |  
+    span Show browsers logs
+    
+  div(ng-if='$ctrl.showLogs')
+    p
+      .btn-toolbar
+        .btn-group
+          label.btn.btn-xs.btn-success(ng-model="$ctrl.filter"  uib-btn-radio="")  
+            span All
+        .btn-group
+          label.btn.btn-xs.btn-default(ng-model="$ctrl.filter" uib-btn-radio="'DEBUG'")  
+            span Debug
+
+          label.btn.btn-xs.btn-info(ng-model="$ctrl.filter" uib-btn-radio="'INFO'")  
+            span Info
+
+          label.btn.btn-xs.btn-warning(ng-model="$ctrl.filter" uib-btn-radio="'WARN'")  
+            span Warning
+
+          label.btn.btn-xs.btn-danger(ng-model="$ctrl.filter" uib-btn-radio="'SEVERE'")  
+            span Severe
+
+          label.btn.btn-xs.btn-danger(ng-model="$ctrl.filter" uib-btn-radio="'ERROR'")  
+            span Error
+      p
+        .row
+          .col-xs-12.col-sm-6.col-md-6.col-lg-6(ng-repeat='i in $ctrl.model')
+            .text-center
+              h4(title='Browser name') {{i.browser}}
+            ul
+              li(ng-repeat='log in i.logs | filter:{level:$ctrl.filter} as filtered')
+                span(ng-class='$ctrl.logLevel(log)')
+                  strong {{log.level}}
+                  |  
+                  span {{log.message}}
+                  |  
+                  span {{log.timestamp | date:'shortTime'}}
+                  |  
+                  a(ng-model="$ctrl.more" uib-btn-checkbox)
+                    i.fa.fa-plus
+
+                  code(ng-if='$ctrl.more').text-muted {{log}}

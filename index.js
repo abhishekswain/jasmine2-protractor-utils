@@ -115,6 +115,7 @@ protractorUtil.takeScreenshotOnExpectDone = function(context) {
                         browser: browserName,
                         when: new Date()
                     });
+                    protractorUtil.writeReport(context);
                 });
             }
             if (context.config.withLogs) {
@@ -123,6 +124,7 @@ protractorUtil.takeScreenshotOnExpectDone = function(context) {
                         logs: logs,
                         browser: browserName
                     });
+                    protractorUtil.writeReport(context);
                 });
             }
             return originalAddExpectationResult.apply(this, arguments);
@@ -174,35 +176,42 @@ protractorUtil.takeScreenshotOnSpecDone = function(context) {
     });
 };
 
-/**
- * Takes a screenshot for each jasmine spec (it) failure
- *
- * @param {Object} context The plugin context object
- * @return {!webdriver.promise.Promise.<R>} A promise
- */
+protractorUtil.writeReport = function(context) {
+    var file = context.config.screenshotPath + '/report.js';
+    console.log('Generating ' + file);
 
-protractorUtil.writeReport = function(context, data) {
-    var file = context.config.screenshotPath + '/index.html';
-    console.log('Generating screenshots report ' + file);
-
-    var html = context.generateReport({
-        data: JSON.stringify({
-            tests: data,
-            generatedOn: new Date()
-        }).replace(/\'/g, '\\\'').replace(/"/g, '\'')
+    var data = JSON.stringify({
+        tests: protractorUtil.testResults,
+        generatedOn: new Date()
     });
-    fse.outputFile(file, html, function(err) {
+
+    var before = "angular.module('reporter').constant('data',";
+    var after = ");"
+
+    fse.outputFile(file, before + data + after, function(err) {
         if (err) console.log(err);
     });
 }
+
+protractorUtil.installReporter = function(context) {
+    var dest = context.config.screenshotPath + '/';
+    console.log('Creating reporter at ' + dest);
+
+    try {
+        fse.copySync(__dirname + '/reporter/dist', dest)
+    } catch (err) {
+        console.error(err)
+    }
+}
+
 protractorUtil.generateHTMLReport = function(context) {
-    context.generateReport = pug.compileFile(__dirname + '/report/index.pug');
 
     return browser.getProcessedConfig().then(function(config) {
         jasmine.getEnv().addReporter((function() {
             return {
                 jasmineStarted: function() {
                     protractorUtil.testResults = [];
+                    protractorUtil.installReporter(context);
                 },
                 specStarted: function(result) {
                     protractorUtil.test = {
@@ -221,10 +230,10 @@ protractorUtil.generateHTMLReport = function(context) {
                     protractorUtil.test.timeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 
                     _.merge(protractorUtil.test, result);
-                    protractorUtil.writeReport(context, protractorUtil.testResults);
+                    protractorUtil.writeReport(context);
                 },
                 jasmineDone: function() {
-                    protractorUtil.writeReport(context, protractorUtil.testResults);
+                    protractorUtil.writeReport(context);
                 }
             };
         })());
