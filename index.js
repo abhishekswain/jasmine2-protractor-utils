@@ -58,7 +58,7 @@ protractorUtil.takeScreenshot = function(config, context, report) {
             stream.end();
             report(screenshotFile, browserName);
         }, function(err) {
-            console.log('Error while taking screenshot - ' + err.message);
+            console.warn('Error in browser instance ' + browserName + ' while taking the screenshot: ' + finalFile + ' - ' + err.message);
         });
     }
 
@@ -69,15 +69,13 @@ protractorUtil.takeLogs = function(config, context, report) {
 
     function takeLog(browserInstance, browserName) {
         console.log('Taking logs from browser instance ' + browserName);
-        try {
             browserInstance.manage().logs().get('browser').then(function(browserLogs) {
                 if (browserLogs && browserLogs.length > 0) {
                     report(browserLogs, browserName);
                 }
+        }, function(err) {
+            console.warn('Error in browser instance ' + browserName + ' while taking the logs:' + err.message);
             });
-        } catch (err) {
-            console.log('Error while taking logs - ' + err);
-        }
     }
 
     protractorUtil.forEachBrowser(takeLog);
