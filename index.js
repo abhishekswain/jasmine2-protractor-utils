@@ -362,6 +362,10 @@ protractorUtil.prototype.setup = function() {
     if (this.config.failTestOnErrorLog) {
         protractorUtil.failTestOnErrorLog(this);
     }
+
+    var pjson = require('./package.json');
+    console.log('Activated Screenshot Reporter Plugin, ver. ' + pjson.version + ' created by ' + _.join(pjson.author, ', ') + ' with the configuration:');
+    console.log(this.config);
 };
 
 var protractorUtill = new protractorUtil();
