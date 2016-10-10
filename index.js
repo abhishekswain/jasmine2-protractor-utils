@@ -43,7 +43,7 @@ protractorUtil.forEachBrowser = function(action) {
     } else {
         action(global.browser, 'default');
     }
-}
+};
 
 protractorUtil.takeScreenshot = function(config, context, report) {
 
@@ -63,7 +63,7 @@ protractorUtil.takeScreenshot = function(config, context, report) {
     }
 
     protractorUtil.forEachBrowser(takeInstanceScreenshot);
-}
+};
 
 protractorUtil.takeLogs = function(config, context, report) {
 
@@ -72,7 +72,7 @@ protractorUtil.takeLogs = function(config, context, report) {
         try {
             browserInstance.manage().logs().get('browser').then(function(browserLogs) {
                 if (browserLogs && browserLogs.length > 0) {
-                    report(browserLogs, browserName)
+                    report(browserLogs, browserName);
                 }
             });
         } catch (err) {
@@ -81,7 +81,7 @@ protractorUtil.takeLogs = function(config, context, report) {
     }
 
     protractorUtil.forEachBrowser(takeLog);
-}
+};
 
 /**
  * Takes a screenshot for each expect/matcher
@@ -148,7 +148,7 @@ protractorUtil.takeScreenshotOnSpecDone = function(context) {
                 },
                 specDone: function(result) {
                     var makeScreenshotsFromEachBrowsers = false;
-                    if (result.failedExpectations.length == 0) {
+                    if (result.failedExpectations.length === 0) {
                         makeScreenshotsFromEachBrowsers = context.config.screenshotOnSpec == 'failure+success';
                     } else {
                         makeScreenshotsFromEachBrowsers = context.config.screenshotOnSpec == 'failure+success' || context.config.screenshotOnSpec == 'failure';
@@ -186,23 +186,23 @@ protractorUtil.writeReport = function(context) {
     });
 
     var before = "angular.module('reporter').constant('data',";
-    var after = ");"
+    var after = ");";
 
     fse.outputFile(file, before + data + after, function(err) {
         if (err) console.log(err);
     });
-}
+};
 
 protractorUtil.installReporter = function(context) {
     var dest = context.config.screenshotPath + '/';
     console.log('Creating reporter at ' + dest);
 
     try {
-        fse.copySync(__dirname + '/reporter/dist', dest)
+        fse.copySync(__dirname + '/reporter/dist', dest);
     } catch (err) {
-        console.error(err)
+        console.error(err);
     }
-}
+};
 
 protractorUtil.generateHTMLReport = function(context) {
 
@@ -336,15 +336,15 @@ protractorUtil.prototype.setup = function() {
         };
     }
 
-    if (this.config.withLogs == undefined) {
+    if (this.config.withLogs === undefined) {
         this.config.withLogs = true;
     }
 
-    if (this.config.screenshotOnExpect == undefined) {
+    if (this.config.screenshotOnExpect === undefined) {
         this.config.screenshotOnExpect = 'failure+success';
     }
 
-    if (this.config.screenshotOnSpec == undefined) {
+    if (this.config.screenshotOnSpec === undefined) {
         this.config.screenshotOnSpec = 'failure+success';
     }
 
