@@ -19,31 +19,32 @@
     .col-md-10.col-sm-12
       .btn-toolbar
         .btn-group
-          label.btn.btn-primary(ng-model="main.show" uib-btn-radio="") 
+          label.btn.btn-primary(ng-model="main.filtering.show" uib-btn-radio="") 
             i.fa.fa-bars
             |  
             span All
+
         .btn-group  
-          label.btn.btn-success(ng-model="main.show" uib-btn-radio="'passed'") 
+          label.btn.btn-success(ng-model="main.filtering.show" uib-btn-radio="'passed'") 
             i.fa.fa-check
             |  
-            span Passed
+            span Passed ({{main.data.stat.passed}})
 
-          label.btn.btn-danger(ng-model="main.show" uib-btn-radio="'failed'")
+          label.btn.btn-danger(ng-model="main.filtering.show" uib-btn-radio="'failed'")
             i.fa.fa-close
             |   
-            span Failed
+            span Failed ({{main.data.stat.failed}})
 
 
-          label.btn.btn-info(ng-model="main.show" uib-btn-radio="'pending'") 
+          label.btn.btn-info(ng-model="main.filtering.show" uib-btn-radio="'pending'") 
             i.fa.fa-pencil
             |   
-            span Pending
+            span Pending ({{main.data.stat.pending}})
 
-          label.btn.btn-default(ng-model="main.show" uib-btn-radio="'disabled'") 
+          label.btn.btn-default(ng-model="main.filtering.show" uib-btn-radio="'disabled'") 
             i.fa.fa-ban
             |   
-            span Disabled 
+            span Disabled ({{main.data.stat.disabled}})
 
     .col-md-2.col-sm-12
       .pull-right 
@@ -51,36 +52,36 @@
         |   
         strong {{filtered.length}}
         |   
-        span {{main.show}}
+        span {{main.filtering.show}}
     .col-md-12
       p
         .btn-toolbar
           .btn-group
-            label.btn.btn-sm.btn-info(ng-model="main.expand" uib-btn-checkbox) 
-              i.fa(ng-class='main.expand ? "fa-toggle-on" : "fa-toggle-off"')
+            label.btn.btn-sm.btn-info(ng-model="main.filtering.expand" uib-btn-checkbox) 
+              i.fa(ng-class='main.filtering.expand ? "fa-toggle-on" : "fa-toggle-off"')
               |  
               span Expand all
-              
-            
+
+
           .btn-group
-            label.btn.btn-sm.btn-primary(ng-model="main.showScreenshots" uib-btn-checkbox) 
-              i.fa(ng-class='main.showScreenshots ? "fa-toggle-on" : "fa-toggle-off"')
+            label.btn.btn-sm.btn-primary(ng-model="main.filtering.showScreenshots" uib-btn-checkbox) 
+              i.fa(ng-class='main.filtering.showScreenshots ? "fa-toggle-on" : "fa-toggle-off"')
               |  
               span Show screenshots
-              
-            label.btn.btn-sm.btn-success(ng-model="main.showPassed" uib-btn-checkbox) 
-              i.fa(ng-class='main.showPassed ? "fa-toggle-on" : "fa-toggle-off"')
+
+            label.btn.btn-sm.btn-success(ng-model="main.filtering.showPassed" uib-btn-checkbox) 
+              i.fa(ng-class='main.filtering.showPassed ? "fa-toggle-on" : "fa-toggle-off"')
               |  
               span Show passed expectations
 
-            label.btn.btn-sm.btn-danger(ng-model="main.showFailed" uib-btn-checkbox) 
-              i.fa(ng-class='main.showFailed ? "fa-toggle-on" : "fa-toggle-off"')
+            label.btn.btn-sm.btn-danger(ng-model="main.filtering.showFailed" uib-btn-checkbox) 
+              i.fa(ng-class='main.filtering.showFailed ? "fa-toggle-on" : "fa-toggle-off"')
               |  
-              span Show failed expectations
+              span Show failed expectations 
 
           .btn-group
-            label.btn.btn-sm.btn-default(ng-model="main.showSpecScreenshots" uib-btn-checkbox) 
-              i.fa(ng-class='main.showSpecScreenshots ? "fa-toggle-on" : "fa-toggle-off"')
+            label.btn.btn-sm.btn-default(ng-model="main.filtering.showSpecScreenshots" uib-btn-checkbox) 
+              i.fa(ng-class='main.filtering.showSpecScreenshots ? "fa-toggle-on" : "fa-toggle-off"')
               |  
               span Show after spec done screenshots
       p
@@ -88,35 +89,35 @@
       p
         .btn-toolbar
           .btn-group
-            label.btn.btn-xs.btn-warning(ng-model="main.showStack" uib-btn-checkbox) 
-              i.fa(ng-class='main.showStack ? "fa-toggle-on" : "fa-toggle-off"')
+            label.btn.btn-xs.btn-warning(ng-model="main.filtering.showStack" uib-btn-checkbox) 
+              i.fa(ng-class='main.filtering.showStack ? "fa-toggle-on" : "fa-toggle-off"')
               |  
               span Show protractor stack 
 
-            label.btn.btn-xs.btn-default(ng-model="main.showLogs" uib-btn-checkbox) 
-              i.fa(ng-class='main.showLogs ? "fa-toggle-on" : "fa-toggle-off"')
+            label.btn.btn-xs.btn-default(ng-model="main.filtering.showLogs" uib-btn-checkbox) 
+              i.fa(ng-class='main.filtering.showLogs ? "fa-toggle-on" : "fa-toggle-off"')
               |  
               span Show browsers logs
           .btn-group
-            label.btn.btn-xs.btn-success(ng-model="main.logFilter"  ng-disabled='!main.showLogs' uib-btn-radio="")  
+            label.btn.btn-xs.btn-success(ng-model="main.filtering.logFilter"  ng-disabled='!main.filtering.showLogs' uib-btn-radio="")  
               span All
           .btn-group
-            label.btn.btn-xs.btn-default(ng-model="main.logFilter" ng-disabled='!main.showLogs' uib-btn-radio="'DEBUG'")  
+            label.btn.btn-xs.btn-default(ng-model="main.filtering.logFilter" ng-disabled='!main.filtering.showLogs' uib-btn-radio="'DEBUG'")  
               span Debug
 
-            label.btn.btn-xs.btn-info(ng-model="main.logFilter" ng-disabled='!main.showLogs' uib-btn-radio="'INFO'")  
+            label.btn.btn-xs.btn-info(ng-model="main.filtering.logFilter" ng-disabled='!main.filtering.showLogs' uib-btn-radio="'INFO'")  
               span Info
 
-            label.btn.btn-xs.btn-warning(ng-model="main.logFilter" ng-disabled='!main.showLogs' uib-btn-radio="'WARN'")  
+            label.btn.btn-xs.btn-warning(ng-model="main.filtering.logFilter" ng-disabled='!main.filtering.showLogs' uib-btn-radio="'WARN'")  
               span Warning
 
-            label.btn.btn-xs.btn-danger(ng-model="main.logFilter" ng-disabled='!main.showLogs' uib-btn-radio="'SEVERE'")  
+            label.btn.btn-xs.btn-danger(ng-model="main.filtering.logFilter" ng-disabled='!main.filtering.showLogs' uib-btn-radio="'SEVERE'")  
               span Severe
 
-            label.btn.btn-xs.btn-danger(ng-model="main.logFilter" ng-disabled='!main.showLogs' uib-btn-radio="'ERROR'")  
+            label.btn.btn-xs.btn-danger(ng-model="main.filtering.logFilter" ng-disabled='!main.filtering.showLogs' uib-btn-radio="'ERROR'")  
               span Error
       p
         hr
 
-    .col-md-12(ng-repeat='t in main.data.tests | filter:{status:main.show} as filtered')
-      spec(test='t' expand='main.expand' show-screenshots='main.showScreenshots' log-filter='main.logFilter' show-spec-screenshots='main.showSpecScreenshots' show-passed='main.showPassed' show-failed='main.showFailed' show-logs='main.showLogs' show-stack='main.showStack')
+    .col-md-12(ng-repeat='t in main.data.tests | filter:{status:main.filtering.show} as filtered')
+      spec(test='t' filtering='main.filtering')

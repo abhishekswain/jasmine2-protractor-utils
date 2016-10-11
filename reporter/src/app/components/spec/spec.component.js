@@ -10,14 +10,7 @@ export let SpecComponent = {
   templateUrl: 'app/components/spec/spec.html',
   bindings: {
     test: '<',
-    expand: '<',
-    showPassed: '<',
-    showFailed: '<',
-    showStack: '<',
-    showLogs: '<',
-    showSpecScreenshots: '<',
-    logFilter: '<',
-    showScreenshots: '<'
+    filtering: '<'
   },
   controller: SpecController
 }

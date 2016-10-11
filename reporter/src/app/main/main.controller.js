@@ -1,15 +1,34 @@
 export class MainController {
-  constructor(data) {
+  constructor(data, $sessionStorage) {
     'ngInject';
 
-    this.expand = true;
-    this.showPassed = true;
-    this.showFailed = true;
-    this.showStack = false;
-    this.showLogs = true;
-    this.showSpecScreenshots = false;
-    this.showScreenshots = false;
-    this.logFilter = 'severe';
     this.data = data;
+    this.storage = $sessionStorage;
+
+    this.storage.$default({
+      filtering: this.getDefaultConfiguration()
+    });
+
+    this.filtering = this.storage.filtering;
+  }
+
+  getDefaultConfiguration() {
+    return {
+      expand: true,
+      showPassed: true,
+      showFailed: true,
+      showStack: false,
+      showLogs: true,
+      showSpecScreenshots: false,
+      showScreenshots: false,
+      logFilter: 'severe'
+    };
+  }
+
+  reset() {
+    this.storage.$reset({
+      filtering: this.getDefaultConfiguration()
+    });
+    this.filtering = this.storage.filtering;
   }
 }

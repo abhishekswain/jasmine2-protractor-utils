@@ -4,7 +4,7 @@ class ScreenshotController {
     this.show = true;
 
     this.$onInit = () => {
-      $scope.$watch(() => this.spec.showScreenshots, (value) => {
+      $scope.$watch(() => this.spec.filtering.showScreenshots, (value) => {
         this.show = value;
       });
     }

@@ -4,7 +4,7 @@ class ExpectationController {
 
     this.$onInit = () => {
 
-      $scope.$watch(() => this.spec.showStack, (value) => {
+      $scope.$watch(() => this.spec.filtering.showStack, (value) => {
         this.showStack = value;
         $log.debug('showStack = ', value);
       });
@@ -15,14 +15,14 @@ class ExpectationController {
 
   setup($scope, $log) {
     if (this.failed()) {
-      $scope.$watch(() => this.spec.showFailed, (value) => {
+      $scope.$watch(() => this.spec.filtering.showFailed, (value) => {
         this.show = value;
         $log.debug('showFailed = ', value);
       });
     }
 
     if (this.passed()) {
-      $scope.$watch(() => this.spec.showPassed, (value) => {
+      $scope.$watch(() => this.spec.filtering.showPassed, (value) => {
         this.show = value;
         $log.debug('showPassed = ', value);
       });

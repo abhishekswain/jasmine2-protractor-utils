@@ -10,7 +10,7 @@ import { SpecComponent } from '../app/components/spec/spec.component';
 import { ScreenshotComponent } from '../app/components/screenshot/screenshot.component';
 // import { Data } from '../app/components/dev/data.mock';
 
-angular.module('reporter', ['ngTouch', 'ngSanitize', 'ui.router', 'ui.bootstrap'])
+angular.module('reporter', ['ngTouch', 'ngSanitize', 'ui.router', 'ui.bootstrap','ngStorage'])
   .constant('moment', moment)
   // .constant('data', Data)
 

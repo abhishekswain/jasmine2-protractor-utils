@@ -2,10 +2,10 @@ class LogController {
   constructor($scope) {
     'ngInject';
     this.$onInit = () => {
-      $scope.$watch(() => this.spec.showLogs, (value) => {
+      $scope.$watch(() => this.spec.filtering.showLogs, (value) => {
         this.showLogs = value;
       });
-      $scope.$watch(() => this.spec.logFilter, (value) => {
+      $scope.$watch(() => this.spec.filtering.logFilter, (value) => {
         this.filter = value;
       });
     }
