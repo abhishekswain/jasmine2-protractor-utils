@@ -185,6 +185,7 @@ protractorUtil.writeReport = function(context) {
 
     var data = JSON.stringify({
         tests: protractorUtil.testResults,
+        stat: protractorUtil.stat,
         generatedOn: new Date()
     });
 
@@ -214,6 +215,7 @@ protractorUtil.generateHTMLReport = function(context) {
             return {
                 jasmineStarted: function() {
                     protractorUtil.testResults = [];
+                    protractorUtil.stat = {};
                     protractorUtil.installReporter(context);
                 },
                 specStarted: function(result) {
@@ -227,6 +229,11 @@ protractorUtil.generateHTMLReport = function(context) {
                     protractorUtil.testResults.push(protractorUtil.test);
                 },
                 specDone: function(result) {
+                    //calcuate total fails, success and so on
+                    if (!protractorUtil.stat[result.status]){
+                      protractorUtil.stat[result.status] = 0;
+                    }
+                    protractorUtil.stat[result.status]++;
                     //calculate diff
                     protractorUtil.test.end = moment();
                     protractorUtil.test.diff = protractorUtil.test.end.diff(protractorUtil.test.start, 'ms');
