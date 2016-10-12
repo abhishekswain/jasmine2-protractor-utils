@@ -1,6 +1,11 @@
 class SpecController {
-  constructor() {
+  constructor($scope) {
     'ngInject';
+    this.$onInit = () => {
+      $scope.$watch(() => this.filtering.expand, (value) => {
+        this.expand = value;
+      });
+    }
   }
 
 }
