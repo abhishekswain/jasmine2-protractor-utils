@@ -1,0 +1,78 @@
+.panel(ng-class='{"panel-danger": $ctrl.test.status === "failed", "panel-success": $ctrl.test.status == "passed", "panel-default": $ctrl.test.status == "disabled", "panel-info": $ctrl.test.status == "pending" }') 
+  .panel-heading(ng-model="$ctrl.expand" uib-btn-checkbox)
+    h3
+      i.fa(ng-class='{"fa-close": $ctrl.test.status === "failed", "fa-check": $ctrl.test.status == "passed", "fa-pencil": $ctrl.test.status == "pending", "fa-ban": $ctrl.test.status == "disabled" }')
+      |  
+      span {{$ctrl.test.description}} 
+      |  
+      small ({{$ctrl.test.id}})
+      |  
+      small.pull-right {{$ctrl.test.duration}}
+    span {{$ctrl.test.pendingReason}}
+    span {{$ctrl.test.failedExpectations[0].message | limitTo:150}}
+  .panel-footer(ng-if='$ctrl.expand')
+    .row
+      .col-md-6.text-success 
+        i.fa.fa-check
+        |  
+        span Passed 
+        |  
+        strong {{$ctrl.test.passedExpectations.length}}
+        |  
+        label.btn.btn-xs.btn-success(ng-model="$ctrl.showPassed" uib-btn-checkbox) 
+          span Show passed
+          |  
+          i.fa(ng-class='$ctrl.showPassed ? "fa-toggle-on" : "fa-toggle-off"')
+
+      .col-md-6.text-danger
+        .pull-right
+          i.fa.fa-exclamation
+          |  
+          span Failed 
+          |  
+          strong {{$ctrl.test.failedExpectations.length}}
+          |  
+          label.btn.btn-xs.btn-danger(ng-model="$ctrl.showFailed" uib-btn-checkbox) 
+            span Show failed 
+            |  
+            i.fa(ng-class='$ctrl.showFailed ? "fa-toggle-on" : "fa-toggle-off"')  
+
+  .panel-body(ng-if='$ctrl.expand') 
+    p.lead {{$ctrl.test.fullName}}
+    .row
+      .col-md-12
+        expectations(model='$ctrl.test.passedExpectations' type='passed')
+      .col-md-12
+        expectations(model='$ctrl.test.failedExpectations' type='failed')
+    .row(ng-if='$ctrl.showSpecScreenshots && $ctrl.test.specScreenshots.length > 0')
+      .col-md-12(ng-class='{"text-danger": $ctrl.test.status === "failed", "text-success": $ctrl.test.status === "passed"}')
+        hr
+        h3 Spec Screenshots
+        p {{$ctrl.test.message}}
+      .col-md-6
+        screenshots(model='$ctrl.test.specScreenshots')
+      .col-md-6
+        logs(model='$ctrl.test.specLogs')
+
+  .panel-footer(ng-if='$ctrl.expand')
+    .row
+      .col-md-3
+        span Start
+        | 
+        strong {{$ctrl.test.start | date:'mediumTime'}}
+      .col-md-3
+        .text-center
+          span End
+          |  
+          strong {{$ctrl.test.end | date:'mediumTime'}}
+      .col-md-3
+        .text-center
+          span Jasmine Timeout
+          | 
+          strong {{$ctrl.test.timeout}} ms 
+
+      .col-md-3
+        .pull-right
+          span Elapsed Time
+          | 
+          strong {{$ctrl.test.diff}} ms 

@@ -1,0 +1,10 @@
+.row
+  .col-xs-12.col-sm-6.col-md-6.col-lg-6(ng-repeat='s in $ctrl.screenshots')
+    .thumbnail
+      .caption.text-center(ng-click='$ctrl.show=!$ctrl.show')
+        h4(title='Browser name') 
+          span {{s.browser}}
+          |  
+          small(title='The screenshot was taken on') {{s.when | date:'mediumTime'}}
+      a(href='{{s.img}}' ng-if='$ctrl.show' target='blank')
+       img(ng-src='{{s.img}}' title='{{s.when | date:"mediumTime"}}')

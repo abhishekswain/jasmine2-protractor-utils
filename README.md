@@ -4,65 +4,27 @@
 [![npm](https://img.shields.io/npm/v/jasmine2-protractor-utils.svg?style=flat-square)](https://www.npmjs.com/package/jasmine2-protractor-utils)
 [![npm](https://img.shields.io/npm/l/jasmine2-protractor-utils.svg?style=flat-square)](https://www.npmjs.com/package/jasmine2-protractor-utils)
 
-# jasmine2-protractor-utils
-Utilities for Protractor with jasmine2 [Screenshot, Browser Console log and more]
+# azachar/jasmine2-protractor-utils
+A fork of Utilities for Protractor with jasmine2 [Screenshot, Browser Console log and more] that comes with a beutifull dynamic angular reporter for chat alike apps.
 
-1. This plugin can take a screenshot for each Jasmine2 expect failure
-2. It can take screenshot for each spec failure as well
-3. It can fail your spec/test if browser console has errors
-4. It can generate beautiful readable HTML reports
-5. TODO: It can output browser console logs on failure(Done) or always(TODO) :)
+1. This plugin can take screenshots for each Jasmine2 expect success/failure on *multiple browsers instances* at once.
+2. It can take screenshots for each spec failure / success as well
+3. It can fail your spec/test if the main browser console has errors
+4. It can generate beautiful angular+bootstrap HTML reports with active filtering to easy find out why your tests are failing
+5. It can output for each browser instance console logs
+
+
+
+# How to install
+
+Please note that this fork is experimental but ready to serve the purpose.
+
+npm install azachar/jasmine2-protractor-utils#fea-instance-screenshots -g
 
 # Usage
 
-## How to install
-
-npm install jasmine2-protractor-utils -g
-
-*To install a particular version:* npm install jasmine2-protractor-utils@version
-
-
-Add this plugin to the protractor config file:
-```js
-exports.config = {
-      plugins: [{
-        package: 'jasmine2-protractor-utils',
-        disableHTMLReport: {Boolean},
-        disableScreenshot: {Boolean},
-        screenshotOnExpectFailure: {Boolean}    (Default - false),
-        screenshotOnSpecFailure: {Boolean}      (Default - false),
-        screenshotPath: {String}                (Default - 'reports/screenshots')
-        clearFoldersBeforeTest: {Boolean}       (Default - false),
-        htmlReportDir:  {String}                (Default - './reports/htmlReports')
-        failTestOnErrorLog: {
-                    failTestOnErrorLogLevel: {Number},  (Default - 900)
-                    excludeKeywords: {A JSON Array}
-                }
-      }]
-    };
-```
-
-Example:
-
-```js
-exports.config = {
-      plugins: [{
-        package: 'jasmine2-protractor-utils',
-        disableHTMLReport: false,
-        disableScreenshot: false,
-        screenshotPath:'./reports/screenshots',
-        screenshotOnExpectFailure:true,
-        screenshotOnSpecFailure:true,
-        clearFoldersBeforeTest: true,
-        htmlReportDir: './reports/htmlReports',
-        failTestOnErrorLog: {
-                    failTestOnErrorLogLevel: 900,
-                    excludeKeywords: ['keyword1', 'keyword2']
-                }
-      }]
-    };
-```
-
+## Single browser app
+No need to setup anything special to make screenshots.
 
 **Please Note**
 
@@ -79,39 +41,106 @@ If not present , please add the following to the config file:
         }
 ```
 
+## Multi browser chat alike app
+
+In order to use multi-browser chat alike testing, you need to keep a track of all browser instances by yourself:
+
+You can do it like this
+```
+var a  = browser.forkNewInstance();
+var b  = browser.forkNewInstance();
+
+global.screenshotBrowsers['anyCustomNameOfBrowserDisplayedInReports'] = a;
+global.screenshotBrowsers.userB = b;
+```
+
+if you close the browser, remove it also from global.screenshotBrowsers
+After closing browser making screenshots wont' work. Make sense, right no browser no screenshot.
+```
+delete global.screenshotBrowsers.userB;
+```
+
+to reset screenshotBrowsers from your previous spec use this code
+
+```
+  beforeAll(function() {
+    global.screenshotBrowsers = {};
+  });
+```
+
+Add this plugin to the protractor config file:
+```js
+exports.config = {
+       plugins: [{
+       package: 'jasmine2-protractor-utils',
+       screenshotOnExpect: {String}    (Default - 'failure+success', 'failure', 'none'),
+       screenshotOnSpec: {String}    (Default - 'failure+success', 'failure', 'none'),
+       withLogs: {Boolean}      (Default - true),
+       htmlReport: {Boolean}      (Default - true),
+       screenshotPath: {String}                (Default - '<reports/e2e>/screenshots')
+       clearFoldersBeforeTest: {Boolean}       (Default - false),
+       failTestOnErrorLog: {
+                failTestOnErrorLogLevel: {Number},  (Default - 900)
+                excludeKeywords: {A JSON Array}
+           }
+        }]
+     };
+```
+
+Example:
+
+```js
+exports.config = {
+      plugins: [{
+        package: 'jasmine2-protractor-utils',
+        screenshotPath:'./REPORTS/e2e',
+        screenshotOnExpect: 'failure+success',
+        screenshotOnSpec: 'failure',
+        clearFoldersBeforeTest: true,
+      }]
+    };
+```
+
 ## package
 
  This is the plugin package name , same as of npm module name for the plugin , 'jasmine2-protractor-utils' usually and preferably
 
 
-## disableHTMLReport
+## htmlReport
 
- If set to 'true', disables HTML report generation.
+ If set to 'false', disables HTML report generation.
 
+ *NOTE: This tool doesn't really make sense to use without the reports.*
+
+ Default: 'true'
  Valid Options: true/false
 
 
-## disableScreenshot
+## screenshotOnExpect
 
- If set to 'true' , disables screenshot generation.
+ Takes from each browser instance stored in global.screenshotBrowsers screenshots for each Jasmine2 expect failure or success,  depending on value.
 
+ Default: 'failure+success'
+ Valid Options: 'failure+success'/'failure'/'none'
+
+
+## screenshotOnSpec
+
+Takes from each browser instance stored in global.screenshotBrowsers screenshots for each Jasmine2 spec failure or success,  depending on value.
+
+Default: 'failure'
+Valid Options: 'failure+success'/'failure'/'none'
+
+## withLogs
+
+ If set to 'true', capture from chrome all logs after each expect or spec
+
+ *NOTE: This works only on chrome!*
+
+ Default: 'true'
  Valid Options: true/false
 
-
-## screenshotOnExpectFailure
-
- Takes a screenshot for each Jasmine2 expect failure, is set true.
- Screenshot will be taken in 'png' format and file name would be: description+spec description+index.png
-
- Default: false
-
-
-## screenshotOnSpecFailure
-
- Take screenshot for each spec failure , if set to true.
- Screenshot will be taken in 'png' format and file name would be: description+spec description.png
-
- Default: false
+In order to make chrome' console works properly, you need modify your ``protractor.conf`` as follows  https://github.com/webdriverio/webdriverio/issues/491#issuecomment-95510796
 
 
 ## screenshotPath
@@ -119,22 +148,15 @@ If not present , please add the following to the config file:
  Path where screenshots will be saved. If path does not exist , will be created.
  e.g './reports/something/savehere/' , please take care of './' and '/' at the beginning and end.
 
- Default: 'reports/screenshots'
+ Please note that due to html reporter sugar, the final path always contains ``+'/screenshots'``
+
+ Default: 'reports/e2e/screenshots'
 
 ## clearFoldersBeforeTest
 
  If this flag set to true, screenshot and html report directories will be emptied before generating new reports and screenshots
 
  Default: false
-
-## htmlReportDir
-
- Path where HTML report will be saved. If path does not exist , will be created.
- e.g './reports/something/savehere/'
-
- If you want to use the default location , never mention 'htmlReportDir' with the plug in configuration. Where as 'disableHTMLReport' must be set to false.
-
- Default: 'reports/htmlReports'
 
 ## failTestOnErrorLog (Chrome only)
 
@@ -154,5 +176,6 @@ Please do not specify this flag , if you don't supply any such keywords.
 
 
 ## TODO
-
-It can output browser console logs on failure(done) or always(TODO) :)
+1. Convert to typescript based es6 npm plugin.
+2. Provide tests, sample testapp, e2e test for reporter
+3. Support for mocha framework

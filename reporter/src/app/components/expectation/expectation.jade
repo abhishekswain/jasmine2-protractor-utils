@@ -1,0 +1,47 @@
+div(ng-if='$ctrl.show && $ctrl.model.length > 0')
+  h3(ng-if='$ctrl.passed()') Passed Expectations
+  h3(ng-if='$ctrl.failed()') Failed Expectations
+  .well(ng-repeat='exp in $ctrl.model')
+    h4(ng-if='$ctrl.passed()').text-success
+      i.fa.fa-check
+      |  
+      strong(title='actual') {{exp.actual}}
+      |  
+      strong.text-primary
+        i {{exp.matcherName}}
+      |  
+      strong(title='Expected') {{exp.expected}}
+      |  
+      i.text-primary =
+      |  
+      strong {{exp.message}}
+      |  
+      span.pull-right.text-info
+        i.fa.fa-clock-o
+        |  
+        strong {{exp.when | date:'H:mm:ss:sss'}}
+
+    h4.text-danger(ng-if='$ctrl.failed()') 
+      i.fa.fa-exclamation
+      |  
+      span {{exp.message}}
+      |  
+      span.pull-right.text-info
+        i.fa.fa-clock-o
+        |  
+        strong {{exp.when | date:'H:mm:ss:sss'}} 
+    screenshots(model='exp.screenshots')
+
+    logs(model='exp.logs')
+
+    div(ng-if='exp.stack')
+      button.btn.btn-warning(ng-model="$ctrl.showStack" uib-btn-checkbox) 
+        i.fa.fa-stack-overflow
+        |  
+        span Show protractor stack
+
+      div(ng-if='$ctrl.showStack')
+        p
+          h5 Protractor's log:
+          pre.text-danger
+            code {{exp.stack}}
