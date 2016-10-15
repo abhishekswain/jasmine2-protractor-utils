@@ -182,9 +182,18 @@ protractorUtil.writeReport = function(context) {
     var file = context.config.screenshotPath + '/report.js';
     console.log('Generating ' + file);
 
+    var ci = {
+      build: process.env.CIRCLE_BUILD_NUM || 'N/A',
+      branch: process.env.CIRCLE_BRANCH || 'N/A',
+      sha: process.env.CIRCLE_SHA1 || 'N/A',
+      tag: process.env.CIRCLE_TAG || 'N/A',
+      name: process.env.CIRCLE_PROJECT_REPONAME || 'N/A'
+    };
+
     var data = JSON.stringify({
         tests: protractorUtil.testResults,
         stat: protractorUtil.stat,
+        ci: ci,
         generatedOn: new Date()
     });
 
