@@ -1,5 +1,3 @@
-var q = require('q');
-var fs = require('fs');
 var fse = require('fs-extra');
 var mkdirp = require('mkdirp');
 var _ = require('lodash');
@@ -53,7 +51,7 @@ protractorUtil.takeScreenshot = function(config, context, report) {
         var finalFile = context.config.screenshotPath + '/' + screenshotFile;
 
         browserInstance.takeScreenshot().then(function(png) {
-            var stream = fs.createWriteStream(finalFile);
+            var stream = fse.createWriteStream(finalFile);
             stream.write(new Buffer(png, 'base64'));
             stream.end();
             report(screenshotFile, browserName);
