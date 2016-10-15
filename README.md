@@ -3,7 +3,10 @@
 
 [![npm](https://img.shields.io/npm/v/protractor-screenshoter-plugin.svg?style=flat-square)](https://www.npmjs.com/package/protractor-screenshoter-plugin)
 [![npm](https://img.shields.io/npm/l/protractor-screenshoter-plugin.svg?style=flat-square)](https://www.npmjs.com/package/protractor-screenshoter-plugin)
+[![Semver](http://img.shields.io/SemVer/2.0.0.png)](http://semver.org/spec/v2.0.0.html)
 
+[![Dependency Status](https://david-dm.org/azachar/protractor-screenshoter-plugin.svg)](https://david-dm.org/azachar/protractor-screenshoter-plugin)
+[![devDependency Status](https://david-dm.org/azachar/protractor-screenshoter-plugin/dev-status.svg)](https://david-dm.org/azachar/protractor-screenshoter-plugin#info=devDependencies)
 
 # protractor-screenshoter-plugin
 A fork of https://github.com/abhishekswain/jasmine2-protractor-utils that comes with a beautifull angular reporter for chat alike apps. The plugin captures for each expectation or spec console logs and makes screenshots for each browser instance.
