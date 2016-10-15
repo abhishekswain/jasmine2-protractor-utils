@@ -372,7 +372,8 @@ protractorUtil.prototype.setup = function() {
     }
 
     var pjson = require('./package.json');
-    console.log('Activated Protractor Screenshoter Plugin, ver. ' + pjson.version + ' created by ' + _.join(pjson.author, ', ') + ' with the configuration:');
+    console.log('Activated Protractor Screenshoter Plugin, ver. ' + pjson.version + ' (c) 2016 ' + pjson.author + ' and contributors');
+    console.log('The resolved configuration is:');
     console.log(this.config);
 };
 

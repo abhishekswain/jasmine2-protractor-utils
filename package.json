@@ -27,8 +27,9 @@
     "browser-console-log",
     "protractor-spec-fail-on-console-error"
   ],
-  "author": [
-    "Andrej Zachar"
+  "author": "Andrej Zachar",
+  "contributors": [
+    "Abhishek Swain"
   ],
   "license": "MIT",
   "bugs": {
