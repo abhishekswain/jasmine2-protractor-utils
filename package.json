@@ -1,36 +1,47 @@
 {
-    "name": "jasmine2-protractor-utils",
-    "version": "1.2.8",
-    "description": "Utilities for Protractor with jasmine2 [HTML Reports, Screenshot, Browser Console log and more]",
-    "main": "index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/abhishekswain/jasmine2-protractor-utils.git"
-    },
-    "keywords": [
-        "jasmine2",
-        "Protractor",
-        "Protractor html report",
-        "Jasmine html report",
-        "html reporter Protractor",
-        "protractor-screenshot",
-        "screenshot-on-failure",
-        "protractor-utilities",
-        "browser-console-log",
-        "protractor-spec-fail-on-console-error"
-    ],
-    "author": "Abhishek Swain",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/abhishekswain/jasmine2-protractor-utils/issues"
-    },
-    "homepage": "https://github.com/abhishekswain/jasmine2-protractor-utils#readme",
-    "dependencies": {
-        "mkdirp": "^0.5.1",
-        "q": "^1.4.1",
-        "fs-extra": "^0.26.5"
-    }
+  "name": "protractor-screenshoter-plugin",
+  "version": "0.1.0",
+  "description": "A jasmine2 protractor plugin that captures for each browser instance a screenshot and browsers' console logs. The snapshot is made optionally for each expect or spec. Plugins comes with a beautiful angular based analytics tool to visually check and fix tests results.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azachar/protractor-screenshoter-plugin.git"
+  },
+  "keywords": [
+    "jasmine2",
+    "Protractor",
+    "screenshots",
+    "report",
+    "Protractor html report",
+    "Jasmine html report",
+    "protractor multi-browser screenshots",
+    "protract chat alike screenshots",
+    "html reporter Protractor",
+    "protractor-screenshot",
+    "screenshot-on-failure",
+    "screenshot-on-expect",
+    "protractor-utilities",
+    "browser-console-log",
+    "protractor-spec-fail-on-console-error"
+  ],
+  "author": [
+    "Andrej Zachar"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/azachar/protractor-screenshoter-plugin/issues"
+  },
+  "homepage": "https://github.com/azachar/protractor-screenshoter-plugin",
+  "dependencies": {
+    "fs-extra": "^0.26.5",
+    "lodash": "^4.16.2",
+    "mkdirp": "^0.5.1",
+    "moment": "^2.15.1",
+    "q": "^1.4.1",
+    "screenshoter-report-analyzer": "^0.1.1",
+    "uuid": "^2.0.3"
+  }
 }

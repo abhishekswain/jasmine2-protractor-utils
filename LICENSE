@@ -1,6 +1,12 @@
 The MIT License (MIT)
 
-Copyright (c) 2015 Abhishek Swain
+Copyright (c) 2015-2016 Andrej Zachar, Abhishek Swain
+
+Copyright for portions of project protractor-screenshoter-plugin is held
+by Abhishek Swain, 2015 as part of project jasmine2-protractor-utils.
+
+All other copyright for project protractor-screenshoter-plugin is
+held by Andrej Zachar, 2016.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,4 +25,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
