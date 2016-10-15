@@ -200,14 +200,13 @@ protractorUtil.installReporter = function(context) {
     var dest = context.config.screenshotPath + '/';
     console.log('Creating reporter at ' + dest);
     try {
-         // FIXME does'n't work
-        // fse.copySync(path.join(require.resolve('screenshoter-report-analyzer'), 'dist'), dest);
-        fse.copySync(__dirname + '/node_modules/screenshoter-report-analyzer/dist', dest);
+        var src  = path.join(require.resolve('screenshoter-report-analyzer/dist/index.html'),'../');
+        fse.copySync(src, dest);
+        console.log('done');
     } catch (err) {
         console.error(err);
         return;
     }
-    console.log('done');
 };
 
 protractorUtil.generateHTMLReport = function(context) {
