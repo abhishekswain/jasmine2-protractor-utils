@@ -9,23 +9,33 @@
 [![devDependency Status](https://david-dm.org/azachar/protractor-screenshoter-plugin/dev-status.svg)](https://david-dm.org/azachar/protractor-screenshoter-plugin#info=devDependencies)
 
 # protractor-screenshoter-plugin
-A fork of https://github.com/abhishekswain/jasmine2-protractor-utils that comes with a beautifull angular reporter for chat alike apps. The plugin captures for each expectation or spec console logs and makes screenshots for each browser instance.
+This plugin captures for each **expectation** or **spec** console **logs** and makes **screenshots** for **each browser** instance. Also it comes with a beautifull angular based  [HTML reporter for chat alike apps](https://github.com/azachar/screenshoter-report-analyzer).
 
-1. This plugin can take screenshots for each Jasmine2 expect success/failure on *multiple browsers instances* at once.
+1. This plugin can take screenshots for each Jasmine2 expect success/failure on *multiple-browsers instances* at once.
 2. It can take screenshots for each spec failure / success as well
-4. It can generate beautiful angular+bootstrap HTML reports with active filtering to easy find out why your tests are failing
-5. It can output for each browser instance console logs
+3. For each expectation or spec can capture console logs for each browser instance
+4. It can generate a report analyzer - angular+bootstrap HTML reports with active filtering to easy find out why your tests are failing
+5. HTML reports allow you to analyze your browser's console logs as well.
+6. Support circleci.com (the report displays a build number, a branch, etc. )
 
 ## Motivation
-The main motivation to make this fork was taking screenshots from multiple browsers at once. So it would allow me to test a chat alike  apps where  2+ browsers instances are required to be run from one single test.
+The main motivation to make this fork from https://github.com/abhishekswain/jasmine2-protractor-utils was taking screenshots from multiple browsers at once. So it would allow me to test a chat alike  apps where  2+ browsers instances are required to be run from one single test.
 
-Later on, I realized that I want to have a quick overview what is happening with my tests on the CI server. Without even re-running them locally. When something goes wrong you are basically unable to discover it. This plugin allows you to do so. The included HTML reporter is angular based with a beautiful bootstrap theme. It allows filtering and narrows down to the root cause. Each screenshot has attached console logs. And we are making screenshots by every expectation not just when the spec is done (this is usually too late to find out, why your test is failing).
+Later on, I realized that I want to have a quick overview what is happening with my tests on the CI server. Without even re-running them locally. When something goes wrong you are basically unable to discover it. This plugin allows you to do so.
+
+The included HTML reporter is angular based standalone app with a beautiful bootstrap theme. It allows filtering and narrows down to the root cause. Each screenshot has attached console logs. And we are making screenshots by every expectation not just when the spec is done (this is usually too late to find out, why your test is failing).
+
+Using this plugin without the HTML report doesn't make sense. The main added value is to have a great analytics tool for your reports that visualize all possible available data to provide holistic approach.
+
+From the code perspective I split up the report code from the protractor plugin. Perhaps you can plugin in your reporter instead.
 
 Also, I created a list of [alternatives](https://github.com/azachar/protractor-screenshoter-plugin/wiki/Alernatives) to this plugin and why I think they are just not good enough.
 
 # How to install
 
-npm install protractor-screenshoter-plugin -g
+``npm install protractor-screenshoter-plugin --save-dev``
+
+NOTE: This plugin depends on [screenshoter-report-analyzer](https://github.com/azachar/screenshoter-report-analyzer). So sometimes even if this plugin version is not updated, the reporter might be.
 
 # Usage
 
@@ -69,7 +79,7 @@ exports.config = {
 No need to setup anything special to make screenshots or capture console logs.
 
 
-## Multi browser chat alike app
+## Multi-browser chat alike app
 
 In order to use multi-browser chat alike testing, you need to keep a track of all browser instances by yourself:
 
@@ -83,7 +93,7 @@ global.screenshotBrowsers.userB = b;
 ```
 
 if you close the browser, remove it also from global.screenshotBrowsers
-After closing browser making screenshots wont' work. Make sense, right no browser no screenshot.
+After closing browser making screenshots won't work. Make sense, right no browser no screenshot.
 ```
 delete global.screenshotBrowsers.userB;
 ```
@@ -131,7 +141,7 @@ Valid Options: 'failure+success'/'failure'/'none'
  Default: 'true'
  Valid Options: true/false
 
-In order to make chrome' console works properly, you need modify your ``protractor.conf`` as follows  https://github.com/webdriverio/webdriverio/issues/491#issuecomment-95510796
+In order to make chrome' console works properly, you need to modify your ``protractor.conf`` as follows  https://github.com/webdriverio/webdriverio/issues/491#issuecomment-95510796
 
 
 ## writeReportFreq
@@ -140,21 +150,18 @@ By default, the output JSON file with tests results is written at the end of the
  Default: 'end'
  Valid Options: 'asap', 'spec', 'end'
 
-In order to make chrome' console works properly, you need modify your ``protractor.conf`` as follows  https://github.com/webdriverio/webdriverio/issues/491#issuecomment-95510796
-
-
 ## screenshotPath
 
- Path where screenshots will be saved. If path does not exist , will be created.
- e.g './reports/something/savehere/' , please take care of './' and '/' at the beginning and end.
+ The path where the final report including screenshots will be saved. If the path does not exist, will be created.
+ e.g './reports/something/samewhere/', please take care of './' and '/' at the beginning and end.
 
- Please note that due to html reporter sugar, the final path always contains ``+'/screenshots'``
+ Please note that due to an HTML reporter sugar, the final screenshots are stored in the subfolder relative to this $screenshotPath parameter, e.g. in the folder ``$screenshotPath/screenshots'``
 
- Default: 'reports/e2e/screenshots'
+ Default: 'reports/e2e'
 
 ## clearFoldersBeforeTest
 
- If this flag set to true, screenshot and html report directories will be emptied before generating new reports and screenshots
+ If this flag set to true, screenshot and HTML report directories will be emptied before generating new reports and screenshots
 
  Default: false
 
