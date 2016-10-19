@@ -41,7 +41,7 @@
     "lodash": "^4.16.4",
     "mkdirp": "^0.5.1",
     "moment": "^2.15.1",
-    "screenshoter-report-analyzer": "^0.1.1",
+    "screenshoter-report-analyzer": "^0.2.1",
     "uuid": "^2.0.3"
   }
 }
