@@ -1,3 +1,5 @@
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/protractor-screenshoter-plugin/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![npm](https://img.shields.io/npm/dm/protractor-screenshoter-plugin.svg?style=flat-square)](https://www.npmjs.com/package/protractor-screenshoter-plugin)
 [![npm](https://img.shields.io/npm/dt/protractor-screenshoter-plugin.svg?style=flat-square)](https://www.npmjs.com/package/protractor-screenshoter-plugin)
 
