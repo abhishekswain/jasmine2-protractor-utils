@@ -35,7 +35,7 @@ Also, I created a list of [alternatives](https://github.com/azachar/protractor-s
 
 # How to install
 
-``npm install protractor-screenshoter-plugin --save-dev``
+``npm install protractor-screenshoter-plugin@latest``
 
 NOTE: This plugin depends on [screenshoter-report-analyzer](https://github.com/azachar/screenshoter-report-analyzer). So sometimes even if this plugin version is not updated, the reporter might be.
 
