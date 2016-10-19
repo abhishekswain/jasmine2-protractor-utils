@@ -71,7 +71,7 @@ exports.config = {
         screenshotOnExpect: 'failure+success',
         screenshotOnSpec: 'none',
         withLogs: 'true',
-        htmlWriteFreq: 'asap',
+        writeReportFreq: 'asap',
         clearFoldersBeforeTest: true,
       }]
     };
