@@ -57,7 +57,13 @@ exports.config = {
                 failTestOnErrorLogLevel: {Number},  (Default - 900)
                 excludeKeywords: {A JSON Array}
            }
-        }]
+       }],
+       onPrepare: function () {
+        // returning the promise makes protractor wait for the reporter config before executing tests
+        return global.browser.getProcessedConfig().then(function (config) {
+          //it is ok to be empty
+        });
+       }
      };
 ```
 
@@ -73,9 +79,17 @@ exports.config = {
         withLogs: 'true',
         writeReportFreq: 'asap',
         clearFoldersBeforeTest: true,
-      }]
+      }],
+      
+       onPrepare: function () {
+        // returning the promise makes protractor wait for the reporter config before executing tests
+        return global.browser.getProcessedConfig().then(function (config) {
+          //it is ok to be empty
+        });
+       }
     };
 ```
+
 
 ## Single browser app
 No need to setup anything special to make screenshots or capture console logs.
