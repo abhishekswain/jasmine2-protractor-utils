@@ -27,11 +27,11 @@ The main motivation to make this fork from https://github.com/abhishekswain/jasm
 
 Later on, I realized that I want to have a quick overview what is happening with my tests on the CI server. Without even re-running them locally. When something goes wrong you are basically unable to discover it. This plugin allows you to do so.
 
-The included HTML reporter is angular based standalone app with a beautiful bootstrap theme. It allows filtering and narrows down to the root cause. Each screenshot has attached console logs. And we are making screenshots by every expectation not just when the spec is done (this is usually too late to find out, why your test is failing).
+The included HTML reporter is Angular based standalone app with a beautiful Bootstrap theme. It allows filtering and narrows down to the root cause. Each screenshot has attached console logs. And we are making screenshots by every expectation not just when the spec is done (this is usually too late to find out, why your test is failing).
 
-Using this plugin without the HTML report doesn't make sense. The main added value is to have a great analytics tool for your reports that visualize all possible available data to provide holistic approach.
+Using this plugin without the HTML report doesn't make sense. The main added value is to have a great analytics tool for your reports that visualize all possible available data to provide a holistic approach.
 
-From the code perspective I split up the report code from the protractor plugin. Perhaps you can plugin in your reporter instead.
+From the code perspective, I split up the report code from the protractor plugin. Perhaps you can plugin in your reporter instead. Also, I think that any open source project must have good test coverage. So I provided the initial set of unit and integrational tests. :beer:
 
 Also, I created a list of [alternatives](https://github.com/azachar/protractor-screenshoter-plugin/wiki/Alernatives) to this plugin and why I think they are just not good enough.
 
@@ -73,23 +73,25 @@ Example:
 
 ```js
 exports.config = {
-      plugins: [{
+    framework: 'jasmine2',
+
+    plugins: [{
         package: 'protractor-screenshoter-plugin',
-        screenshotPath:'./REPORTS/e2e',
+        screenshotPath: './REPORTS/e2e',
         screenshotOnExpect: 'failure+success',
         screenshotOnSpec: 'none',
         withLogs: 'true',
         writeReportFreq: 'asap',
-        clearFoldersBeforeTest: true,
-      }],
+        clearFoldersBeforeTest: true
+    }],
 
-       onPrepare: function () {
+    onPrepare: function() {
         // returning the promise makes protractor wait for the reporter config before executing tests
-        return global.browser.getProcessedConfig().then(function (config) {
-          //it is ok to be empty
+        return global.browser.getProcessedConfig().then(function(config) {
+            //it is ok to be empty
         });
-       }
-    };
+    }
+};
 ```
 
 
@@ -129,7 +131,7 @@ to reset screenshotBrowsers from your previous spec use this code
 
  If set to 'false', disables HTML report generation.
 
- *NOTE: This tool doesn't really make sense to use without the reports.*
+ **NOTE: This tool doesn't really make sense to use without the reports.**
 
  Default: 'true'
  Valid Options: true/false
@@ -221,3 +223,4 @@ git push --follow-tags origin master
 ## TODO
 *  Convert to typescript based es6 npm plugin with a proper test infrastructure
 *  Support Mocha framework
+*  100% Test coverage
