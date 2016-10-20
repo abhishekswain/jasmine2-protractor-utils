@@ -10,6 +10,8 @@
 [![Dependency Status](https://david-dm.org/azachar/protractor-screenshoter-plugin.svg)](https://david-dm.org/azachar/protractor-screenshoter-plugin)
 [![devDependency Status](https://david-dm.org/azachar/protractor-screenshoter-plugin/dev-status.svg)](https://david-dm.org/azachar/protractor-screenshoter-plugin#info=devDependencies)
 
+[![Build Status](https://travis-ci.org/azachar/protractor-screenshoter-plugin.svg?branch=master)](https://travis-ci.org/azachar/protractor-screenshoter-plugin)
+
 # protractor-screenshoter-plugin
 This plugin captures for each **expectation** or **spec** console **logs** and makes **screenshots** for **each browser** instance. Also it comes with a beautifull angular based  [HTML reporter for chat alike apps](https://github.com/azachar/screenshoter-report-analyzer).
 
@@ -80,7 +82,7 @@ exports.config = {
         writeReportFreq: 'asap',
         clearFoldersBeforeTest: true,
       }],
-      
+
        onPrepare: function () {
         // returning the promise makes protractor wait for the reporter config before executing tests
         return global.browser.getProcessedConfig().then(function (config) {
@@ -199,6 +201,22 @@ An array of keywords to be excluded , while searching for error logs. i.e If a l
 
 Please do not specify this flag , if you don't supply any such keywords.
 
+# Development
+
+After cloning the project you can run tests as follows:
+
+1. ``npm install``
+2. ``npm run setup``
+3. ``npm run server &``
+4. ``npm test``
+
+### Releasing
+To deploy a new version run commands. If all tests are passed it will be published to npm on its own.
+
+```
+npm run release
+git push --follow-tags origin master
+```
 
 ## TODO
 *  Convert to typescript based es6 npm plugin with a proper test infrastructure

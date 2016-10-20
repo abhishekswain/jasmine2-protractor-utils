@@ -4,7 +4,10 @@
   "description": "A jasmine2 protractor plugin that captures for each browser instance a screenshot and browsers' console logs. The snapshot is made optionally for each expect or spec. Plugins comes with a beautiful angular based analytics tool to visually check and fix tests results.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "setup": "webdriver-manager update",
+    "server": "webdriver-manager start",
+    "test": "jasmine",
+    "release": "standard-version"
   },
   "repository": {
     "type": "git",
@@ -43,5 +46,10 @@
     "moment": "^2.15.1",
     "screenshoter-report-analyzer": "^0.2.1",
     "uuid": "^2.0.3"
+  },
+  "devDependencies": {
+    "jasmine": "^2.5.2",
+    "protractor": "^4.0.9",
+    "standard-version": "^3.0.0"
   }
 }
