@@ -2,7 +2,7 @@ var env = require('./environment');
 var path = require('path');
 
 var fs = require('fs-extra');
-var cp = require('child_process')
+var cp = require('child_process');
 
 function runProtractorWithConfig(configName) {
     var command = 'protractor ./spec/integrational/protractor-config/' + configName;
@@ -10,10 +10,10 @@ function runProtractorWithConfig(configName) {
     try {
         cp.execSync(command, {
             // stdio: [0, 1, 2] //for full debug
-            stdio: [2]
+               stdio: [2]
         });
     } catch (er) {
-        console.debug(er.stack);
+        console.log(er.stack);
         if (er.pid) {
             console.log('%s (pid: %d) exited with status %d',
                 er.file, er.pid, er.status);
@@ -34,9 +34,9 @@ describe("Screenshoter running under protractor", function() {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
     });
 
-    describe("out of box configuration", function() {
+    describe("out of box configuration - default", function() {
 
-        beforeEach(function() {
+        beforeAll(function() {
             runProtractorWithConfig('default.js');
         });
 
@@ -54,6 +54,17 @@ describe("Screenshoter running under protractor", function() {
             });
         });
 
+        it("should generate screenshots", function(done) {
+            fs.readdir('./reports/e2e/screenshots', function(err, items) {
+                if (err) {
+                    return done.fail(err);
+                }
+                expect(items.length).toEqual(8);
+                done();
+            });
+        });
+
+
         it("should install reporter", function(done) {
             fs.readFile('./reports/e2e/index.html', 'utf8', function(err, data) {
                 if (err) {
@@ -67,14 +78,14 @@ describe("Screenshoter running under protractor", function() {
 
     });
 
-    describe("suggested configuration", function() {
+    describe("suggested configuration from readme", function() {
 
-        beforeEach(function() {
+        beforeAll(function() {
             runProtractorWithConfig('readme.js');
         });
 
         it("should generate report.js", function(done) {
-            fs.readFile('./tmp/REPORTS/e2e/report.js', 'utf8', function(err, data) {
+            fs.readFile('.tmp/readme/report.js', 'utf8', function(err, data) {
                 if (err) {
                     return done.fail(err);
                 }
@@ -87,8 +98,18 @@ describe("Screenshoter running under protractor", function() {
             });
         });
 
+        it("should generate screenshots", function(done) {
+            fs.readdir('.tmp/readme/screenshots', function(err, items) {
+                if (err) {
+                    return done.fail(err);
+                }
+                expect(items.length).toEqual(5);
+                done();
+            });
+        });
+
         it("should install reporter", function(done) {
-            fs.readFile('./tmp/REPORTS/e2e/index.html', 'utf8', function(err, data) {
+            fs.readFile('.tmp/readme/index.html', 'utf8', function(err, data) {
                 if (err) {
                     return done.fail(err);
                 }

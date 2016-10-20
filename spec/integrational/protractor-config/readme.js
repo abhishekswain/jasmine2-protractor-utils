@@ -6,7 +6,7 @@ exports.config = {
     specs: ['../protractor/angularjs-homepage-test.js'],
     plugins: [{
         path: '../../../index.js',
-        screenshotPath: './tmp/REPORTS/e2e',
+        screenshotPath: '.tmp/readme',
         screenshotOnExpect: 'failure+success',
         screenshotOnSpec: 'none',
         withLogs: 'true',
