@@ -48,7 +48,9 @@ Also, I created a list of [alternatives](https://github.com/azachar/protractor-s
 
 # How to install
 
-``npm install protractor-screenshoter-plugin``
+```
+npm install protractor-screenshoter-plugin
+```
 
 NOTE: This plugin depends on [screenshoter-report-analyzer](https://github.com/azachar/screenshoter-report-analyzer). So sometimes even if this plugin version is not updated, the reporter might be.
 
@@ -223,7 +225,7 @@ After cloning the project you can run tests as follows:
 3. ``npm run server &``
 4. ``npm test``
 
-## Commiting
+## Committing
 Please use ``git-cz`` to format your commit message.
 
 ### Releasing
