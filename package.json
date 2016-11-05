@@ -48,8 +48,14 @@
     "uuid": "^2.0.3"
   },
   "devDependencies": {
+    "cz-conventional-changelog": "^1.2.0",
     "jasmine": "^2.5.2",
     "protractor": "^4.0.9",
     "standard-version": "^3.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
