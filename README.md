@@ -118,8 +118,8 @@ In order to use multi-browser chat alike testing, you need to keep a track of al
 
 You can do it like this
 ```
-var a  = browser.forkNewInstance();
-var b  = browser.forkNewInstance();
+var a  = browser.forkNewDriverInstance();
+var b  = browser.forkNewDriverInstance();
 
 global.screenshotBrowsers['anyCustomNameOfBrowserDisplayedInReports'] = a;
 global.screenshotBrowsers.userB = b;
