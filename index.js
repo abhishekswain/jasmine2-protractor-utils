@@ -313,41 +313,26 @@ protractorUtil.failTestOnErrorLog = function(context) {
  * Initialize configurtion
  */
 protractorUtil.prototype.setup = function() {
+    var defaultSettings = {
+        screenshotPath: './reports/e2e',
+        clearFoldersBeforeTest: true,
+        withLogs: true,
+        screenshotOnExpect: 'failure+success',
+        screenshotOnSpec: 'failure+success',
+        htmlReport: true,
+        writeReportFreq: 'end'
+    }
+
+    this.config = _.merge({}, defaultSettings, this.config);
+
     var self = this;
-
-    if (!this.config.screenshotPath) {
-        this.config.screenshotPath = './reports/e2e';
-    }
-
-    if (this.config.clearFoldersBeforeTest) {
-        try {
-            fse.removeSync(this.config.screenshotPath);
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
     mkdirp.sync(this.config.screenshotPath + '/screenshots', function(err) {
-        if (err) console.error(err);
-        else console.log(self.config.screenshotPath + ' folder created!');
+        if (err) {
+            console.error(err);
+        } else {
+            console.log(self.config.screenshotPath + ' folder created!');
+        }
     });
-
-
-    if (this.config.withLogs === undefined) {
-        this.config.withLogs = true;
-    }
-
-    if (this.config.screenshotOnExpect === undefined) {
-        this.config.screenshotOnExpect = 'failure+success';
-    }
-
-    if (this.config.screenshotOnSpec === undefined) {
-        this.config.screenshotOnSpec = 'failure+success';
-    }
-
-    if (this.config.htmlReport === undefined) {
-        this.config.htmlReport = true;
-    }
 
     var pjson = require('./package.json');
     console.log('Activated Protractor Screenshoter Plugin, ver. ' + pjson.version + ' (c) 2016 ' + pjson.author + ' and contributors');
