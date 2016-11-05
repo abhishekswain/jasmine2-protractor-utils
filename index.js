@@ -125,7 +125,7 @@ protractorUtil.takeScreenshotOnExpectDone = function(context) {
 };
 
 
-protractorUtil.takeScreenshotOnSpecDone = function(result, context) {
+protractorUtil.takeScreenshotOnSpecDone = function(result, context, test) {
 
     var makeScreenshotsFromEachBrowsers = false;
     if (result.failedExpectations.length === 0) {
@@ -135,19 +135,25 @@ protractorUtil.takeScreenshotOnSpecDone = function(result, context) {
     }
     if (makeScreenshotsFromEachBrowsers) {
         protractorUtil.takeScreenshot(context, function(file, browserName) {
-            protractorUtil.test.specScreenshots.push({
+            test.specScreenshots.push({
                 img: file,
                 browser: browserName,
                 when: new Date()
             });
+            if (context.config.writeReportFreq === 'asap' || context.config.writeReportFreq === 'spec' || protractorUtil.jasmineDone) {
+                protractorUtil.writeReport(context);
+            }
         });
     }
     if (context.config.withLogs) {
         protractorUtil.takeLogs(context, function(logs, browserName) {
-            protractorUtil.test.specLogs.push({
+            test.specLogs.push({
                 logs: logs,
                 browser: browserName
             });
+            if (context.config.writeReportFreq === 'asap' || context.config.writeReportFreq === 'spec' || protractorUtil.jasmineDone) {
+                protractorUtil.writeReport(context);
+            }
         });
     }
 
@@ -218,7 +224,7 @@ protractorUtil.registerJasmineReporter = function(context) {
         },
         specDone: function(result) {
             if (context.config.screenshotOnSpec != 'none') {
-                protractorUtil.takeScreenshotOnSpecDone(result, context);
+                protractorUtil.takeScreenshotOnSpecDone(result, context, protractorUtil.test);
             }
 
             //calcuate total fails, success and so on
@@ -237,6 +243,7 @@ protractorUtil.registerJasmineReporter = function(context) {
             }
         },
         jasmineDone: function() {
+            protractorUtil.jasmineDone = true; //taking screenshots after the spec might be not finished since it is an async operation
             protractorUtil.writeReport(context);
         }
     });
