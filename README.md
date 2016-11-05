@@ -22,6 +22,16 @@ This plugin captures for each **expectation** or **spec** console **logs** and m
 5. HTML reports allow you to analyze your browser's console logs as well.
 6. Support circleci.com (the report displays a build number, a branch, etc. )
 
+### Screenshots
+##### Reporter Controls
+![Screenshoter reporter controlls](https://cdn.rawgit.com/azachar/screenshoter-report-analyzer/master/screenshots/screenshot1.png)
+
+#####  Expanded Spec
+![Screenshoter reporter spec](https://cdn.rawgit.com/azachar/screenshoter-report-analyzer/master/screenshots/screenshot2.png)
+
+#####  Console log management
+![Screenshoter reporter console](https://cdn.rawgit.com/azachar/screenshoter-report-analyzer/master/screenshots/screenshot3.png)
+
 ## Motivation
 The main motivation to make this fork from https://github.com/abhishekswain/jasmine2-protractor-utils was taking screenshots from multiple browsers at once. So it would allow me to test a chat alike  apps where  2+ browsers instances are required to be run from one single test.
 
@@ -37,7 +47,7 @@ Also, I created a list of [alternatives](https://github.com/azachar/protractor-s
 
 # How to install
 
-``npm install protractor-screenshoter-plugin@latest``
+``npm install protractor-screenshoter-plugin``
 
 NOTE: This plugin depends on [screenshoter-report-analyzer](https://github.com/azachar/screenshoter-report-analyzer). So sometimes even if this plugin version is not updated, the reporter might be.
 
