@@ -30,6 +30,10 @@ This plugin captures for each **expectation** or **spec** console **logs** and m
 #####  Expanded Spec
 ![Screenshoter reporter spec](https://cdn.rawgit.com/azachar/screenshoter-report-analyzer/master/screenshots/screenshot2.png)
 
+#####  Forked Browser Support
+![Screenshoter multi browsers](https://cdn.rawgit.com/azachar/screenshoter-report-analyzer/master/screenshots/screenshot4.png)
+
+
 #####  Console log management
 ![Screenshoter reporter console](https://cdn.rawgit.com/azachar/screenshoter-report-analyzer/master/screenshots/screenshot3.png)
 
