@@ -43,7 +43,7 @@ protractorUtil.forEachBrowser = function(action) {
     }
 };
 
-protractorUtil.takeScreenshot = function(config, context, report) {
+protractorUtil.takeScreenshot = function(context, report) {
 
     function takeInstanceScreenshot(browserInstance, browserName) {
         var screenshotFile = 'screenshots/' + uuid.v1() + '.png';
@@ -63,7 +63,7 @@ protractorUtil.takeScreenshot = function(config, context, report) {
     protractorUtil.forEachBrowser(takeInstanceScreenshot);
 };
 
-protractorUtil.takeLogs = function(config, context, report) {
+protractorUtil.takeLogs = function(context, report) {
 
     function takeLog(browserInstance, browserName) {
         // console.log('Taking logs from browser instance ' + browserName);
@@ -79,113 +79,91 @@ protractorUtil.takeLogs = function(config, context, report) {
     protractorUtil.forEachBrowser(takeLog);
 };
 
-/**
- * Takes a screenshot for each expect/matcher
- *
- * @param {Object} context The plugin context object
- * @return {!webdriver.promise.Promise.<R>} A promise
- */
 protractorUtil.takeScreenshotOnExpectDone = function(context) {
-    return browser.getProcessedConfig().then(function(config) {
-        //Takes screen shot for expect failures
-        var originalAddExpectationResult = jasmine.Spec.prototype.addExpectationResult;
-        jasmine.Spec.prototype.addExpectationResult = function(passed, expectation) {
-            var self = this;
+    //Takes screen shot for expect failures
+    var originalAddExpectationResult = jasmine.Spec.prototype.addExpectationResult;
+    jasmine.Spec.prototype.addExpectationResult = function(passed, expectation) {
+        var self = this;
 
-            expectation.screenshots = [];
-            expectation.logs = [];
-            expectation.when = new Date();
+        expectation.screenshots = [];
+        expectation.logs = [];
+        expectation.when = new Date();
 
-            var makeScreenshotsFromEachBrowsers = false;
-            if (passed) {
-                protractorUtil.test.passedExpectations.push(expectation);
-                makeScreenshotsFromEachBrowsers = context.config.screenshotOnExpect == 'failure+success';
-            } else {
-                protractorUtil.test.failedExpectations.push(expectation);
-                makeScreenshotsFromEachBrowsers = context.config.screenshotOnExpect == 'failure+success' || context.config.screenshotOnExpect == 'failure';
-            }
-            if (makeScreenshotsFromEachBrowsers) {
-                protractorUtil.takeScreenshot(config, context, function(file, browserName) {
-                    expectation.screenshots.push({
-                        img: file,
-                        browser: browserName,
-                        when: new Date()
-                    });
-                    if (context.config.writeReportFreq === 'asap') {
-                        protractorUtil.writeReport(context);
-                    }
+        var makeScreenshotsFromEachBrowsers = false;
+        if (passed) {
+            protractorUtil.test.passedExpectations.push(expectation);
+            makeScreenshotsFromEachBrowsers = context.config.screenshotOnExpect === 'failure+success';
+        } else {
+            protractorUtil.test.failedExpectations.push(expectation);
+            makeScreenshotsFromEachBrowsers = context.config.screenshotOnExpect === 'failure+success' || context.config.screenshotOnExpect === 'failure';
+        }
+        if (makeScreenshotsFromEachBrowsers) {
+            protractorUtil.takeScreenshot(context, function(file, browserName) {
+                expectation.screenshots.push({
+                    img: file,
+                    browser: browserName,
+                    when: new Date()
                 });
-            }
-            if (context.config.withLogs) {
-                protractorUtil.takeLogs(config, context, function(logs, browserName) {
-                    expectation.logs.push({
-                        logs: logs,
-                        browser: browserName
-                    });
-                    if (context.config.writeReportFreq === 'asap') {
-                        protractorUtil.writeReport(context);
-                    }
-                });
-            }
-            return originalAddExpectationResult.apply(this, arguments);
-        };
-    });
-};
-
-
-/**
- * Takes a screenshot for each jasmine spec (it) failure
- *
- * @param {Object} context The plugin context object
- * @return {!webdriver.promise.Promise.<R>} A promise
- */
-protractorUtil.takeScreenshotOnSpecDone = function(context) {
-    return browser.getProcessedConfig().then(function(config) {
-        jasmine.getEnv().addReporter((function() {
-            return {
-                jasmineStarted: function() {
-                    global.screenshotBrowsers = {};
-                },
-                specDone: function(result) {
-                    var makeScreenshotsFromEachBrowsers = false;
-                    if (result.failedExpectations.length === 0) {
-                        makeScreenshotsFromEachBrowsers = context.config.screenshotOnSpec == 'failure+success';
-                    } else {
-                        makeScreenshotsFromEachBrowsers = context.config.screenshotOnSpec == 'failure+success' || context.config.screenshotOnSpec == 'failure';
-                    }
-                    if (makeScreenshotsFromEachBrowsers) {
-                        protractorUtil.takeScreenshot(config, context, function(file, browserName) {
-                            protractorUtil.test.specScreenshots.push({
-                                img: file,
-                                browser: browserName,
-                                when: new Date()
-                            });
-                        });
-                    }
-                    if (context.config.withLogs) {
-                        protractorUtil.takeLogs(config, context, function(logs, browserName) {
-                            protractorUtil.test.specLogs.push({
-                                logs: logs,
-                                browser: browserName
-                            });
-                        });
-                    }
+                if (context.config.writeReportFreq === 'asap') {
+                    protractorUtil.writeReport(context);
                 }
-            };
-        })());
-    });
+            });
+        }
+        if (context.config.withLogs) {
+            protractorUtil.takeLogs(context, function(logs, browserName) {
+                expectation.logs.push({
+                    logs: logs,
+                    browser: browserName
+                });
+                if (context.config.writeReportFreq === 'asap') {
+                    protractorUtil.writeReport(context);
+                }
+            });
+        }
+        return originalAddExpectationResult.apply(this, arguments);
+    };
 };
+
+
+protractorUtil.takeScreenshotOnSpecDone = function(result, context) {
+
+    var makeScreenshotsFromEachBrowsers = false;
+    if (result.failedExpectations.length === 0) {
+        makeScreenshotsFromEachBrowsers = context.config.screenshotOnSpec === 'failure+success';
+    } else {
+        makeScreenshotsFromEachBrowsers = context.config.screenshotOnSpec === 'failure+success' || context.config.screenshotOnSpec === 'failure';
+    }
+    if (makeScreenshotsFromEachBrowsers) {
+        protractorUtil.takeScreenshot(context, function(file, browserName) {
+            protractorUtil.test.specScreenshots.push({
+                img: file,
+                browser: browserName,
+                when: new Date()
+            });
+        });
+    }
+    if (context.config.withLogs) {
+        protractorUtil.takeLogs(context, function(logs, browserName) {
+            protractorUtil.test.specLogs.push({
+                logs: logs,
+                browser: browserName
+            });
+        });
+    }
+
+}
+
 
 protractorUtil.writeReport = function(context) {
     var file = context.config.screenshotPath + '/report.js';
     console.log('Generating ' + file);
 
     var ci = {
-      build: process.env.CIRCLE_BUILD_NUM || 'N/A',
-      branch: process.env.CIRCLE_BRANCH || 'N/A',
-      sha: process.env.CIRCLE_SHA1 || 'N/A',
-      tag: process.env.CIRCLE_TAG || 'N/A',
-      name: process.env.CIRCLE_PROJECT_REPONAME || 'N/A'
+        build: process.env.CIRCLE_BUILD_NUM || 'N/A',
+        branch: process.env.CIRCLE_BRANCH || 'N/A',
+        sha: process.env.CIRCLE_SHA1 || 'N/A',
+        tag: process.env.CIRCLE_TAG || 'N/A',
+        name: process.env.CIRCLE_PROJECT_REPONAME || 'N/A'
     };
 
     var data = JSON.stringify({
@@ -207,7 +185,7 @@ protractorUtil.installReporter = function(context) {
     var dest = context.config.screenshotPath + '/';
     console.log('Creating reporter at ' + dest);
     try {
-        var src  = path.join(require.resolve('screenshoter-report-analyzer/dist/index.html'),'../');
+        var src = path.join(require.resolve('screenshoter-report-analyzer/dist/index.html'), '../');
         fse.copySync(src, dest);
         console.log('done');
     } catch (err) {
@@ -216,47 +194,51 @@ protractorUtil.installReporter = function(context) {
     }
 };
 
-protractorUtil.generateHTMLReport = function(context) {
+protractorUtil.registerJasmineReporter = function(context) {
 
-    return browser.getProcessedConfig().then(function(config) {
-        jasmine.getEnv().addReporter((function() {
-            return {
-                jasmineStarted: function() {
-                    protractorUtil.testResults = [];
-                    protractorUtil.stat = {};
-                    protractorUtil.installReporter(context);
-                },
-                specStarted: function(result) {
-                    protractorUtil.test = {
-                        start: moment(),
-                        specScreenshots: [],
-                        specLogs: [],
-                        failedExpectations: [],
-                        passedExpectations: []
-                    };
-                    protractorUtil.testResults.push(protractorUtil.test);
-                },
-                specDone: function(result) {
-                    //calcuate total fails, success and so on
-                    if (!protractorUtil.stat[result.status]){
-                      protractorUtil.stat[result.status] = 0;
-                    }
-                    protractorUtil.stat[result.status]++;
-                    //calculate diff
-                    protractorUtil.test.end = moment();
-                    protractorUtil.test.diff = protractorUtil.test.end.diff(protractorUtil.test.start, 'ms');
-                    protractorUtil.test.timeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+    jasmine.getEnv().addReporter({
+        jasmineStarted: function() {
+            protractorUtil.testResults = [];
+            protractorUtil.stat = {};
+            if (context.config.htmlReport) {
+                protractorUtil.installReporter(context);
+            }
+        },
+        specStarted: function(result) {
+            global.screenshotBrowsers = {};
 
-                    _.merge(protractorUtil.test, result);
-                    if (context.config.writeReportFreq === 'asap' || context.config.writeReportFreq === 'spec') {
-                        protractorUtil.writeReport(context);
-                    }
-                },
-                jasmineDone: function() {
-                    protractorUtil.writeReport(context);
-                }
+            protractorUtil.test = {
+                start: moment(),
+                specScreenshots: [],
+                specLogs: [],
+                failedExpectations: [],
+                passedExpectations: []
             };
-        })());
+            protractorUtil.testResults.push(protractorUtil.test);
+        },
+        specDone: function(result) {
+            if (context.config.screenshotOnSpec != 'none') {
+                protractorUtil.takeScreenshotOnSpecDone(result, context);
+            }
+
+            //calcuate total fails, success and so on
+            if (!protractorUtil.stat[result.status]) {
+                protractorUtil.stat[result.status] = 0;
+            }
+            protractorUtil.stat[result.status]++;
+            //calculate diff
+            protractorUtil.test.end = moment();
+            protractorUtil.test.diff = protractorUtil.test.end.diff(protractorUtil.test.start, 'ms');
+            protractorUtil.test.timeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+
+            _.merge(protractorUtil.test, result);
+            if (context.config.writeReportFreq === 'asap' || context.config.writeReportFreq === 'spec') {
+                protractorUtil.writeReport(context);
+            }
+        },
+        jasmineDone: function() {
+            protractorUtil.writeReport(context);
+        }
     });
 };
 
@@ -315,14 +297,13 @@ protractorUtil.failTestOnErrorLog = function(context) {
                 }
             }
 
-            protractorUtil.takeLogs(config, context, verifyConsole);
+            protractorUtil.takeLogs(context, verifyConsole);
         });
     });
 };
 
 /**
- * Creates the screenshot storage folder
- * Calls relevant methods to achieve the desired tasks
+ * Initialize configurtion
  */
 protractorUtil.prototype.setup = function() {
     var self = this;
@@ -344,17 +325,6 @@ protractorUtil.prototype.setup = function() {
         else console.log(self.config.screenshotPath + ' folder created!');
     });
 
-    //must be registered as a first one
-    if (this.config.htmlReport || this.config.htmlReport === undefined) {
-        protractorUtil.generateHTMLReport(this);
-    } else {
-        protractorUtil.test = {
-            specScreenshots: [],
-            specLogs: [],
-            failedExpectations: [],
-            passedExpectations: []
-        };
-    }
 
     if (this.config.withLogs === undefined) {
         this.config.withLogs = true;
@@ -368,14 +338,8 @@ protractorUtil.prototype.setup = function() {
         this.config.screenshotOnSpec = 'failure+success';
     }
 
-    if (this.config.screenshotOnExpect != 'none') {
-        protractorUtil.takeScreenshotOnExpectDone(this);
-    }
-    if (this.config.screenshotOnSpec != 'none') {
-        protractorUtil.takeScreenshotOnSpecDone(this);
-    }
-    if (this.config.failTestOnErrorLog) {
-        protractorUtil.failTestOnErrorLog(this);
+    if (this.config.htmlReport === undefined) {
+        this.config.htmlReport = true;
     }
 
     var pjson = require('./package.json');
@@ -384,6 +348,19 @@ protractorUtil.prototype.setup = function() {
     console.log(this.config);
 };
 
-var protractorUtill = new protractorUtil();
+/**
+ * Sets reporter hooks based on the configurtion
+ */
+protractorUtil.prototype.onPrepare = function() {
+    protractorUtil.registerJasmineReporter(this);
 
-module.exports = protractorUtill;
+    if (this.config.screenshotOnExpect != 'none') {
+        protractorUtil.takeScreenshotOnExpectDone(this);
+    }
+
+    if (this.config.failTestOnErrorLog) {
+        return protractorUtil.failTestOnErrorLog(this);
+    }
+}
+
+module.exports = new protractorUtil();

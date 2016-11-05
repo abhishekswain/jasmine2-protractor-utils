@@ -22,7 +22,8 @@ describe("Screenshoter unit", function() {
             screenshotPath: './reports/e2e',
             withLogs: true,
             screenshotOnExpect: 'failure+success',
-            screenshotOnSpec: 'failure+success'
+            screenshotOnSpec: 'failure+success',
+            htmlReport: true
         });
     });
 });

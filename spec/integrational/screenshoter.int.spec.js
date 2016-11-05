@@ -10,16 +10,18 @@ function runProtractorWithConfig(configName) {
     try {
         cp.execSync(command, {
             // stdio: [0, 1, 2] //for full debug
-               stdio: [2]
+            stdio: [1,2]
         });
+        console.info('Done with command ' + command);
+        return true;
     } catch (er) {
         console.log(er.stack);
         if (er.pid) {
             console.log('%s (pid: %d) exited with status %d',
                 er.file, er.pid, er.status);
         }
+        return false;
     }
-    console.info('Done with command ' + command);
 }
 
 describe("Screenshoter running under protractor", function() {
@@ -117,6 +119,12 @@ describe("Screenshoter running under protractor", function() {
                 expect(data).toContain('html');
                 done();
             });
+        });
+    });
+
+    describe("bug #4", function() {
+        it("should run without errors", function() {
+            expect(runProtractorWithConfig('bug4.js')).toBeTruthy();
         });
     });
 });
