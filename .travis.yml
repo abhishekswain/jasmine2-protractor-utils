@@ -3,7 +3,7 @@ node_js:
   - "node"
 sudo: required
 dist: trusty
-before_install:  
+before_install:
  - export CHROME_BIN=/usr/bin/google-chrome
  - export DISPLAY=:99.0
  - sh -e /etc/init.d/xvfb start
@@ -13,7 +13,7 @@ before_install:
  - sudo dpkg -i google-chrome*.deb
 before_script:
   - npm run setup
-  - npm run server &
+  - nohup bash -c "npm run server 2>&1 &"
   - sleep 10
 deploy:
   provider: npm
