@@ -161,8 +161,24 @@ protractorUtil.takeScreenshotOnSpecDone = function(result, context, test) {
 
 
 protractorUtil.writeReport = function(context) {
-    var file = context.config.screenshotPath + '/report.js';
+    var file = context.config.reportFile;
     console.log('Generating ' + file);
+
+    var data = JSON.stringify({
+        tests: protractorUtil.testResults,
+        stat: protractorUtil.stat,
+        generatedOn: new Date()
+    });
+
+    fse.outputFile(file, data, function(err) {
+        if (err) console.log(err);
+        protractorUtil.joinReports(context);
+    });
+};
+
+protractorUtil.joinReports = function(context) {
+    var file = context.config.screenshotPath + '/report.js';
+    var reports = fse.walkSync(context.config.screenshotPath + '/reports/')
 
     var ci = {
         build: process.env.CIRCLE_BUILD_NUM || 'N/A',
@@ -172,17 +188,31 @@ protractorUtil.writeReport = function(context) {
         name: process.env.CIRCLE_PROJECT_REPONAME || 'N/A'
     };
 
-    var data = JSON.stringify({
-        tests: protractorUtil.testResults,
-        stat: protractorUtil.stat,
+    var data = {
+        tests: [],
+        stat: {
+            passed: 0,
+            failed: 0
+        },
         ci: ci,
         generatedOn: new Date()
-    });
+    };
+
+    //concat all tests
+    for (var i = 0; i < reports.length; i++) {
+        var report = fse.readJsonSync(reports[i]);
+        for (var j = 0; j < report.tests.length; j++) {
+            var test = report.tests[j];
+            data.tests.push(test);
+        }
+        data.stat.passed += report.stat.passed;
+        data.stat.failed += report.stat.failed;
+    }
 
     var before = "angular.module('reporter').constant('data',";
     var after = ");";
 
-    fse.outputFile(file, before + data + after, function(err) {
+    fse.outputFile(file, before + JSON.stringify(data) + after, function(err) {
         if (err) console.log(err);
     });
 };
@@ -324,15 +354,25 @@ protractorUtil.prototype.setup = function() {
     }
 
     this.config = _.merge({}, defaultSettings, this.config);
+    this.config.reportFile = this.config.screenshotPath + '/reports/' + uuid.v1() + '.js';
 
     var self = this;
     mkdirp.sync(this.config.screenshotPath + '/screenshots', function(err) {
         if (err) {
             console.error(err);
         } else {
-            console.log(self.config.screenshotPath + ' folder created!');
+            console.log(self.config.screenshotPath + '/screenshots' + ' folder created!');
         }
     });
+
+    mkdirp.sync(this.config.screenshotPath + '/reports', function(err) {
+        if (err) {
+            console.error(err);
+        } else {
+            console.log(self.config.screenshotPath + '/reports' + ' folder created!');
+        }
+    });
+
 
     var pjson = require('./package.json');
     console.log('Activated Protractor Screenshoter Plugin, ver. ' + pjson.version + ' (c) 2016 ' + pjson.author + ' and contributors');

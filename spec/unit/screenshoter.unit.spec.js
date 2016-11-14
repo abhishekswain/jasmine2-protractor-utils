@@ -17,6 +17,8 @@ describe("Screenshoter unit", function() {
     it("should resolve a default config", function() {
         screenshoter.config = {};
         screenshoter.setup();
+        expect(screenshoter.config.reportFile).toBeDefined();
+        delete screenshoter.config.reportFile;
         expect(screenshoter.config).toEqual({
             screenshotPath: './reports/e2e',
             withLogs: true,
@@ -33,6 +35,8 @@ describe("Screenshoter unit", function() {
             path: './bla/bla'
         };
         screenshoter.setup();
+        expect(screenshoter.config.reportFile).toBeDefined();
+        delete screenshoter.config.reportFile;
         expect(screenshoter.config).toEqual({
             screenshotPath: './reports/e2e',
             withLogs: true,
@@ -52,6 +56,8 @@ describe("Screenshoter unit", function() {
             screenshotOnSpec: 'failure'
         };
         screenshoter.setup();
+        expect(screenshoter.config.reportFile).toBeDefined();
+        delete screenshoter.config.reportFile;
         expect(screenshoter.config).toEqual({
             screenshotPath: 'REPORTS',
             withLogs: true,
