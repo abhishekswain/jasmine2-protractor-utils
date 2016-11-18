@@ -325,6 +325,13 @@ protractorUtil.prototype.setup = function() {
 
     this.config = _.merge({}, defaultSettings, this.config);
 
+    if (this.config.clearFoldersBeforeTest) {
+        try {
+            fse.removeSync(this.config.screenshotPath);
+        } catch (err) {
+            console.error(err);
+        }
+    }
     var self = this;
     mkdirp.sync(this.config.screenshotPath + '/screenshots', function(err) {
         if (err) {

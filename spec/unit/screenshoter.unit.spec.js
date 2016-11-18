@@ -1,3 +1,5 @@
+var fse = require('fs-extra');
+
 describe("Screenshoter unit", function() {
 
     var screenshoter;
@@ -13,6 +15,47 @@ describe("Screenshoter unit", function() {
     it("should be defined", function() {
         expect(screenshoter).toBeDefined();
     });
+
+
+    ['.tmp/cleanFolders', '.tmp/cleanFolders/'].forEach(function(screenshotPath) {
+
+        describe('cleanup folders for ' + screenshotPath, function() {
+
+            beforeEach(function() {
+                fse.ensureDirSync('.tmp/cleanFolders/reports');
+                fse.outputFileSync('.tmp/cleanFolders/reports/report.js', '{}');
+                fse.outputFileSync('.tmp/cleanFolders/index.html', 'html');
+
+                var files = fse.walkSync('.tmp/cleanFolders');
+                expect(files.length).toBe(2);
+
+                screenshoter.config = {
+                    'screenshotPath': screenshotPath
+                };
+            });
+
+            it("should clean up folders with explicit value", function() {
+                screenshoter.config.clearFoldersBeforeTest = true;
+                screenshoter.setup();
+                var files = fse.walkSync('.tmp/cleanFolders');
+                expect(files.length).toBe(0);
+            });
+
+            it("should clean up folders default value", function() {
+                screenshoter.setup();
+                var files = fse.walkSync('.tmp/cleanFolders');
+                expect(files.length).toBe(0);
+            });
+            it("should not clean up folders", function() {
+                screenshoter.config.clearFoldersBeforeTest = false;
+                screenshoter.setup();
+                var files = fse.walkSync('.tmp/cleanFolders');
+                expect(files.length).toBe(2);
+            });
+
+        });
+    });
+
 
     it("should resolve a default config", function() {
         screenshoter.config = {};
