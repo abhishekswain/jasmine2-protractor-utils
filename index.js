@@ -356,6 +356,13 @@ protractorUtil.prototype.setup = function() {
     this.config = _.merge({}, defaultSettings, this.config);
     this.config.reportFile = this.config.screenshotPath + '/reports/' + uuid.v1() + '.js';
 
+    if (this.config.clearFoldersBeforeTest) {
+        try {
+            fse.removeSync(this.config.screenshotPath);
+        } catch (err) {
+            console.error(err);
+        }
+    }
     var self = this;
     mkdirp.sync(this.config.screenshotPath + '/screenshots', function(err) {
         if (err) {
@@ -374,7 +381,7 @@ protractorUtil.prototype.setup = function() {
     });
 
 
-    var pjson = require('./package.json');
+    var pjson = require(__dirname+'/package.json');
     console.log('Activated Protractor Screenshoter Plugin, ver. ' + pjson.version + ' (c) 2016 ' + pjson.author + ' and contributors');
     console.log('The resolved configuration is:');
     console.log(this.config);

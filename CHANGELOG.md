@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.2.3"></a>
+## [0.2.3](https://github.com/azachar/protractor-screenshoter-plugin/compare/v0.2.2...v0.2.3) (2016-11-18)
+
+
+### Bug Fixes
+
+* **plugin:** author's info ([ab2b8d3](https://github.com/azachar/protractor-screenshoter-plugin/commit/ab2b8d3))
+* **plugin:** clean up folders ([c358ec1](https://github.com/azachar/protractor-screenshoter-plugin/commit/c358ec1))
+
+
+
 <a name="0.2.2"></a>
 ## [0.2.2](https://github.com/azachar/protractor-screenshoter-plugin/compare/v0.2.1...v0.2.2) (2016-11-05)
 
