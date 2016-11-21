@@ -13,6 +13,33 @@
 
 [![Build Status](https://travis-ci.org/azachar/protractor-screenshoter-plugin.svg?branch=master)](https://travis-ci.org/azachar/protractor-screenshoter-plugin)
 
+# This branch has experimental parallel support
+For each run of the protractor it creates a separate tests results that are in the end merged into one report.
+
+Configuration such as this one are supported:
+```js
+exports.config = {
+    framework: 'jasmine2',
+    //like usual (no change in config api)
+    plugins: [{
+        package: 'protractor-screenshoter-plugin',
+        screenshotPath: './REPORTS/e2e',
+        screenshotOnExpect: 'failure+success',
+        screenshotOnSpec: 'none',
+        withLogs: 'true',
+        writeReportFreq: 'asap',
+        clearFoldersBeforeTest: true
+    }],
+    //this is new and supported
+    capabilities: {
+        'browserName':'chrome',
+        'shardTestFiles': true,
+        'maxInstances': 5
+    }
+};
+```
+
+
 # protractor-screenshoter-plugin
 This plugin captures for each **expectation** or **spec** console **logs** and makes **screenshots** for **each browser** instance. Also it comes with a beautifull angular based  [HTML reporter for chat alike apps](https://github.com/azachar/screenshoter-report-analyzer).
 
@@ -53,7 +80,7 @@ Also, I created a list of [alternatives](https://github.com/azachar/protractor-s
 # How to install
 
 ```
-npm install protractor-screenshoter-plugin
+npm install azachar/protractor-screenshoter-plugin#feat-parallel-support
 ```
 
 NOTE: This plugin depends on [screenshoter-report-analyzer](https://github.com/azachar/screenshoter-report-analyzer). So sometimes even if this plugin version is not updated, the reporter might be.
