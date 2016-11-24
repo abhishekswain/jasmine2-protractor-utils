@@ -42,6 +42,10 @@ var protractorUtil = function () {
 protractorUtil.takeScreenshotOnExpectFail = function (context) {
     if (context.config.screenshotOnExpectFailure) {
         return global.browser.getProcessedConfig().then(function (config) {
+
+            if (config.capabilities.name) {
+                var configName = config.capabilities.name + "-";
+            }
             //Takes screen shot for expect failures
             var originalAddExpectationResult = jasmine.Spec.prototype.addExpectationResult;
             jasmine.Spec.prototype.addExpectationResult = function () {
@@ -51,9 +55,9 @@ protractorUtil.takeScreenshotOnExpectFail = function (context) {
                     // take screenshot
                     global.browser.takeScreenshot().then(function (png) {
 
-                        var fileName = (config.capabilities.browserName + '-' + self.result.fullName + '-' + 'expect failure-' + protractorUtil.index++).replace(/[\/\\]/g, ' ');
+                        var fileName = (configName ? configName : "") + (config.capabilities.browserName + '-' + self.result.fullName + '-' + 'expect failure-' + protractorUtil.index++).replace(/[\/\\]/g, ' ');
                         if (fileName.length > 245) {
-                            fileName = (config.capabilities.browserName + '-' + self.result.fullName).replace(/[\/\\]/g, ' ').substring(0, 230) + '-' + 'expect failure-' + protractorUtil.index++;
+                            fileName = ((configName ? configName : "") + (config.capabilities.browserName + '-' + self.result.fullName).replace(/[\/\\]/g, ' ')).substring(0, 230) + '-' + 'expect failure-' + protractorUtil.index++;
                         }
 
                         if (context.config.screenshotPath) {
@@ -87,15 +91,19 @@ protractorUtil.takeScreenshotOnSpecFail = function (context) {
 
     if (context.config.screenshotOnSpecFailure) {
         return global.browser.getProcessedConfig().then(function (config) {
+            if (config.capabilities.name) {
+                var configName = config.capabilities.name + "-";
+            }
+
             jasmine.getEnv().addReporter((function () {
                 return{
                     specDone: function (result) {
                         if (result.failedExpectations.length > 0) {
                             // take screenshot
                             browser.takeScreenshot().then(function (png) {
-                                var fileName = (config.capabilities.browserName + '-' + result.fullName).replace(/[\/\\]/g, ' ');
+                                var fileName = (configName ? configName : "") + (config.capabilities.browserName + '-' + result.fullName).replace(/[\/\\]/g, ' ');
                                 if (fileName.length > 245) {
-                                    fileName = (config.capabilities.browserName + '-' + result.fullName).replace(/[\/\\]/g, ' ').substring(0, 230);
+                                    fileName = ((configName ? configName : "") + (config.capabilities.browserName + '-' + result.fullName).replace(/[\/\\]/g, ' ')).substring(0, 230);
                                 }
 
                                 if (context.config.screenshotPath) {
@@ -325,6 +333,29 @@ protractorUtil.prototype.setup = function () {
 protractorUtil.prototype.postTest = function () {
     protractorUtil.index = 0;
 
+};
+
+protractorUtil.prototype.postResults = function () {
+    var self = this;
+    return global.browser.getProcessedConfig().then(function (config) {
+        var htmlDir = self.config.htmlReportDir ? self.config.htmlReportDir : './reports/htmlReports';
+
+
+        var files = fs.readdirSync(htmlDir);
+        var finalSuites = [];
+        files.forEach(function (file, index) {
+            if ((file.search('.json') > -1) && (file.toString() !== 'data.json')) {
+                var contents = fs.readFileSync(htmlDir + '/' + file).toString();
+                finalSuites = finalSuites.concat(JSON.parse(contents.replace('data = ', '')).suites);
+            }
+        });
+
+        var resultToWrite = 'data = ' + '{ suites:' + JSON.stringify(finalSuites) + '}';
+        if (finalSuites.length > 0) {
+
+            fs.writeFileSync(htmlDir + '/data.json', resultToWrite, 'utf-8');
+        }
+    });
 };
 
 var protractorUtill = new protractorUtil();

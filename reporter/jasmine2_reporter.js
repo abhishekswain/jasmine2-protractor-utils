@@ -7,6 +7,7 @@
 
 var fs = require('fs');
 var fse = require('fs-extra');
+var mkdirp = require('mkdirp');
 
 var Jasmine2Reporter = function (htmlReportPath, screenshotPath, config) {
 
@@ -127,12 +128,13 @@ var Jasmine2Reporter = function (htmlReportPath, screenshotPath, config) {
 
             suite.specs.forEach(function (spec, specIndex) {
 
-                    suites[index].specs[specIndex].screenShots = [];
-                    screenNames.forEach(function (screens, screenIndex) {
-                        if (spec.fullName.search((screens.replace(new RegExp("[0-9]*\\.png$"), "").replace('-expect failure-',"").replace(config.capabilities.browserName+'-',"").replace('.png',"").trim())) > -1) {
-                            suites[index].specs[specIndex].screenShots.push(screens);
-                        }
-                    });
+                suites[index].specs[specIndex].screenShots = [];
+                screenNames.forEach(function (screens, screenIndex) {
+                    var prefixToReplace = config.capabilities.name ? (config.capabilities.name + '-' + config.capabilities.browserName + '-') : (config.capabilities.browserName + '-');
+                    if (spec.fullName.search((screens.replace(new RegExp("[0-9]*\\.png$"), "").replace('-expect failure-', "").replace(prefixToReplace, "").replace('.png', "").trim())) > -1) {
+                        suites[index].specs[specIndex].screenShots.push(screens);
+                    }
+                });
 
             });
 
@@ -142,7 +144,18 @@ var Jasmine2Reporter = function (htmlReportPath, screenshotPath, config) {
         results.screenshotPath = screenshotPath;
         var resultToWrite = 'data = ' + JSON.stringify(results);
 
-        fs.writeFileSync(htmlReportDir + '/data.json', resultToWrite, 'utf-8');
+        if (config.capabilities.name) {
+//            mkdirp.sync(htmlReportDir + '/' + config.capabilities.name, function (err) {
+//                if (err) console.error(err);
+//                else console.log(config.capabilities.name + ' folder created!');
+//            });
+           // var jsonPostFix = config.capabilities.name;
+        }
+
+        var jsonWritePath = config.capabilities.name ? (htmlReportDir + '/'+config.capabilities.name+'data.json') : (htmlReportDir + '/data.json');
+        //var htmlDir = config.capabilities.name ? (htmlReportDir + '/' + config.capabilities.name) : htmlReportDir;
+
+        fs.writeFileSync(jsonWritePath, resultToWrite, 'utf-8');
         fse.copySync(__dirname + '/../report', htmlReportDir);
 
         try {
@@ -152,7 +165,12 @@ var Jasmine2Reporter = function (htmlReportPath, screenshotPath, config) {
         }
 
         try {
-            fse.copySync(screenshotPath, htmlReportDir+'/screenshots');
+            fse.copy(screenshotPath, htmlReportDir + '/screenshots', function (err) {
+                if (err) {
+                    console.error(err)
+                }
+            });
+            // fse.copySync(screenshotPath, htmlReportDir + '/screenshots');
         } catch (err) {
             console.error(err)
         }
