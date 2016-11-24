@@ -40,6 +40,7 @@
   },
   "homepage": "https://github.com/azachar/protractor-screenshoter-plugin",
   "dependencies": {
+    "extendr": "^3.2.2",
     "fs-extra": "^1.0.0",
     "lodash": "^4.16.4",
     "mkdirp": "^0.5.1",

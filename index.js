@@ -4,6 +4,7 @@ var _ = require('lodash');
 var uuid = require('uuid');
 var moment = require('moment');
 var path = require('path');
+var dereferenceJSON = require('extendr').dereferenceJSON;
 
 /**
  * This plugin does few things:
@@ -164,13 +165,13 @@ protractorUtil.writeReport = function(context) {
     var file = context.config.reportFile;
     console.log('Generating ' + file);
 
-    var data = JSON.stringify({
+    var data = {
         tests: protractorUtil.testResults,
         stat: protractorUtil.stat,
         generatedOn: new Date()
-    });
+    };
 
-    fse.outputFile(file, data, function(err) {
+    fse.outputFile(file, JSON.stringify(dereferenceJSON(data)), function(err) {
         if (err) console.log(err);
         protractorUtil.joinReports(context);
     });
