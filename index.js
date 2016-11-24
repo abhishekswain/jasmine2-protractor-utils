@@ -34,12 +34,17 @@ var path = require('path');
 var protractorUtil = function() {};
 
 protractorUtil.forEachBrowser = function(action) {
-    if (global.screenshotBrowsers && Object.keys(global.screenshotBrowsers).length > 0) {
-        _.forOwn(global.screenshotBrowsers, function(instance, name) {
-            action(instance, name);
-        });
-    } else {
-        action(global.browser, 'default');
+    try {
+        if (global.screenshotBrowsers && Object.keys(global.screenshotBrowsers).length > 0) {
+            _.forOwn(global.screenshotBrowsers, function(instance, name) {
+                action(instance, name);
+            });
+        } else {
+            action(global.browser, 'default');
+        }
+    } catch (err) {
+        console.warn('Unknown error:');
+        console.warn(err);
     }
 };
 
@@ -341,7 +346,7 @@ protractorUtil.prototype.setup = function() {
         }
     });
 
-    var pjson = require(__dirname+'/package.json');
+    var pjson = require(__dirname + '/package.json');
     console.log('Activated Protractor Screenshoter Plugin, ver. ' + pjson.version + ' (c) 2016 ' + pjson.author + ' and contributors');
     console.log('The resolved configuration is:');
     console.log(this.config);
