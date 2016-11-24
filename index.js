@@ -35,12 +35,17 @@ var dereferenceJSON = require('extendr').dereferenceJSON;
 var protractorUtil = function() {};
 
 protractorUtil.forEachBrowser = function(action) {
-    if (global.screenshotBrowsers && Object.keys(global.screenshotBrowsers).length > 0) {
-        _.forOwn(global.screenshotBrowsers, function(instance, name) {
-            action(instance, name);
-        });
-    } else {
-        action(global.browser, 'default');
+    try {
+        if (global.screenshotBrowsers && Object.keys(global.screenshotBrowsers).length > 0) {
+            _.forOwn(global.screenshotBrowsers, function(instance, name) {
+                action(instance, name);
+            });
+        } else {
+            action(global.browser, 'default');
+        }
+    } catch (err) {
+        console.warn('Unknown error:');
+        console.warn(err);
     }
 };
 
@@ -201,13 +206,18 @@ protractorUtil.joinReports = function(context) {
 
     //concat all tests
     for (var i = 0; i < reports.length; i++) {
-        var report = fse.readJsonSync(reports[i]);
-        for (var j = 0; j < report.tests.length; j++) {
-            var test = report.tests[j];
-            data.tests.push(test);
+        try {
+            var report = fse.readJsonSync(reports[i]);
+            for (var j = 0; j < report.tests.length; j++) {
+                var test = report.tests[j];
+                data.tests.push(test);
+            }
+            data.stat.passed += report.stat.passed;
+            data.stat.failed += report.stat.failed;
+        } catch (err) {
+            console.warn('Unknown error while process report %s', reports[i]);
+            console.log(err);
         }
-        data.stat.passed += report.stat.passed;
-        data.stat.failed += report.stat.failed;
     }
 
     var before = "angular.module('reporter').constant('data',";
@@ -382,7 +392,7 @@ protractorUtil.prototype.setup = function() {
     });
 
 
-    var pjson = require(__dirname+'/package.json');
+    var pjson = require(__dirname + '/package.json');
     console.log('Activated Protractor Screenshoter Plugin, ver. ' + pjson.version + ' (c) 2016 ' + pjson.author + ' and contributors');
     console.log('The resolved configuration is:');
     console.log(this.config);
