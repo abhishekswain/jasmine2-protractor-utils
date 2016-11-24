@@ -11,5 +11,7 @@ module.exports = {
             (process.env.TEST_BROWSER_NAME || 'chrome'),
         'version':
             (process.env.TEST_BROWSER_VERSION || 'ANY')
-    }
+    },
+
+    debug: (process.env.TEST_DEBUG || false)
 };

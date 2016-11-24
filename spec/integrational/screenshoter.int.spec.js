@@ -10,7 +10,7 @@ function runProtractorWithConfig(configName) {
     try {
         cp.execSync(command, {
             // stdio: [0, 1, 2] //for full debug
-            stdio: [2]
+            stdio: env.debug ? [0, 1, 2]: [2]
         });
         console.info('Done with command ' + command);
         return true;
