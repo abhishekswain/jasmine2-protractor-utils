@@ -198,7 +198,9 @@ protractorUtil.joinReports = function(context) {
         tests: [],
         stat: {
             passed: 0,
-            failed: 0
+            failed: 0,
+            pending: 0,
+            disabled: 0
         },
         ci: ci,
         generatedOn: new Date()
@@ -212,8 +214,10 @@ protractorUtil.joinReports = function(context) {
                 var test = report.tests[j];
                 data.tests.push(test);
             }
-            data.stat.passed += report.stat.passed;
-            data.stat.failed += report.stat.failed;
+            data.stat.passed += report.stat.passed || 0;
+            data.stat.failed += report.stat.failed || 0;
+            data.stat.pending += report.stat.pending || 0;
+            data.stat.disabled += report.stat.disabled || 0;
         } catch (err) {
             console.warn('Unknown error while process report %s', reports[i]);
             console.log(err);
