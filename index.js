@@ -5,6 +5,7 @@ var uuid = require('uuid');
 var moment = require('moment');
 var path = require('path');
 var dereferenceJSON = require('extendr').dereferenceJSON;
+var imageToAscii = require("image-to-ascii")
 
 /**
  * This plugin does few things:
@@ -60,7 +61,9 @@ protractorUtil.takeScreenshot = function(context, report) {
             var stream = fse.createWriteStream(finalFile);
             stream.write(new Buffer(png, 'base64'));
             stream.end();
-            report(screenshotFile, browserName);
+            stream.on('finish', function() {
+                report(screenshotFile, browserName, finalFile);
+            });
         }, function(err) {
             console.warn('Error in browser instance ' + browserName + ' while taking the screenshot: ' + finalFile + ' - ' + err.message);
         });
@@ -96,22 +99,35 @@ protractorUtil.takeScreenshotOnExpectDone = function(context) {
         expectation.when = new Date();
 
         var makeScreenshotsFromEachBrowsers = false;
+        var makeAsciiLog = false;
         if (passed) {
             protractorUtil.test.passedExpectations.push(expectation);
             makeScreenshotsFromEachBrowsers = context.config.screenshotOnExpect === 'failure+success';
+            makeAsciiLog = context.config.imageToAscii === 'failure+success';
         } else {
             protractorUtil.test.failedExpectations.push(expectation);
             makeScreenshotsFromEachBrowsers = context.config.screenshotOnExpect === 'failure+success' || context.config.screenshotOnExpect === 'failure';
+            makeAsciiLog = context.config.imageToAscii === 'failure+success' || context.config.imageToAscii === 'failure';
         }
         if (makeScreenshotsFromEachBrowsers) {
-            protractorUtil.takeScreenshot(context, function(file, browserName) {
+            protractorUtil.takeScreenshot(context, function(filename, browserName, finalFile) {
                 expectation.screenshots.push({
-                    img: file,
+                    img: filename,
                     browser: browserName,
                     when: new Date()
                 });
                 if (context.config.writeReportFreq === 'asap') {
                     protractorUtil.writeReport(context);
+                }
+                if (makeAsciiLog) {
+                    try {
+                        imageToAscii(finalFile, context.config.imageToAsciiOpts, function(err, converted) {
+                            console.error(err || converted);
+                        });
+                    } catch (err) {
+                        console.warn(err);
+                        console.info('Please check the installation at https://github.com/IonicaBizau/image-to-ascii/blob/master/INSTALLATION.md');
+                    }
                 }
             });
         }
@@ -364,6 +380,10 @@ protractorUtil.prototype.setup = function() {
         withLogs: true,
         screenshotOnExpect: 'failure+success',
         screenshotOnSpec: 'failure+success',
+        imageToAscii: 'failure',
+        imageToAsciiOpts: {
+            bg: true
+        },
         htmlReport: true,
         writeReportFreq: 'end'
     }

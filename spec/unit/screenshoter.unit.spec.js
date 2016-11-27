@@ -67,6 +67,10 @@ describe("Screenshoter unit", function() {
             withLogs: true,
             screenshotOnExpect: 'failure+success',
             screenshotOnSpec: 'failure+success',
+            imageToAscii: 'failure',
+            imageToAsciiOpts: {
+                bg: true
+            },
             clearFoldersBeforeTest: true,
             htmlReport: true,
             writeReportFreq: 'end'
@@ -85,6 +89,10 @@ describe("Screenshoter unit", function() {
             withLogs: true,
             screenshotOnExpect: 'failure+success',
             screenshotOnSpec: 'failure+success',
+            imageToAscii: 'failure',
+            imageToAsciiOpts: {
+                bg: true
+            },
             clearFoldersBeforeTest: true,
             htmlReport: true,
             writeReportFreq: 'end',
@@ -106,6 +114,10 @@ describe("Screenshoter unit", function() {
             withLogs: true,
             screenshotOnExpect: 'failure+success',
             screenshotOnSpec: 'failure',
+            imageToAscii: 'failure',
+            imageToAsciiOpts: {
+                bg: true
+            },
             clearFoldersBeforeTest: true,
             writeReportFreq: 'end',
             htmlReport: true

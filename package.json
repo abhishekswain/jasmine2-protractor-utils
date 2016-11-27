@@ -42,6 +42,7 @@
   "dependencies": {
     "extendr": "^3.2.2",
     "fs-extra": "^1.0.0",
+    "image-to-ascii": "^3.0.5",
     "lodash": "^4.16.4",
     "mkdirp": "^0.5.1",
     "moment": "^2.15.1",
