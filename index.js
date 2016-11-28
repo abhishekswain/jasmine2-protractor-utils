@@ -264,8 +264,7 @@ protractorUtil.installReporter = function(context) {
     console.log('Creating reporter at ' + dest);
     try {
         var src = path.join(require.resolve('screenshoter-report-analyzer/dist/index.html'), '../');
-        fse.copySync(src, dest);
-        console.log('done');
+        fse.copy(src, dest);
     } catch (err) {
         console.error(err);
         return;
