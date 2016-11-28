@@ -113,7 +113,7 @@ protractorUtil.takeScreenshotOnExpectDone = function(context) {
                 makeAsciiLog = context.config.imageToAscii === 'failure+success' || context.config.imageToAscii === 'failure';
             }
         } else {
-          console.warn('Calling addExpectationResult before specStarted!');
+            console.warn('Calling addExpectationResult before specStarted!');
         }
         if (makeScreenshotsFromEachBrowsers) {
             protractorUtil.takeScreenshot(context, function(filename, browserName, finalFile, browserInstance) {
@@ -276,6 +276,8 @@ protractorUtil.registerJasmineReporter = function(context) {
 
     jasmine.getEnv().addReporter({
         jasmineStarted: function() {
+            global.screenshotBrowsers = {};
+
             protractorUtil.testResults = [];
             protractorUtil.stat = {};
             if (context.config.htmlReport) {
@@ -283,8 +285,6 @@ protractorUtil.registerJasmineReporter = function(context) {
             }
         },
         specStarted: function(result) {
-            global.screenshotBrowsers = {};
-
             protractorUtil.test = {
                 start: moment(),
                 specScreenshots: [],
