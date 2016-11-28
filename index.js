@@ -62,7 +62,7 @@ protractorUtil.takeScreenshot = function(context, report) {
             stream.write(new Buffer(png, 'base64'));
             stream.end();
             stream.on('finish', function() {
-                report(screenshotFile, browserName, finalFile);
+                report(screenshotFile, browserName, finalFile, browserInstance);
             });
         }, function(err) {
             console.warn('Error in browser instance ' + browserName + ' while taking the screenshot: ' + finalFile + ' - ' + err.message);
@@ -94,9 +94,11 @@ protractorUtil.takeScreenshotOnExpectDone = function(context) {
     jasmine.Spec.prototype.addExpectationResult = function(passed, expectation) {
         var self = this;
 
+        var now = moment();
+
         expectation.screenshots = [];
         expectation.logs = [];
-        expectation.when = new Date();
+        expectation.when = now.toDate();
 
         var makeScreenshotsFromEachBrowsers = false;
         var makeAsciiLog = false;
@@ -110,7 +112,7 @@ protractorUtil.takeScreenshotOnExpectDone = function(context) {
             makeAsciiLog = context.config.imageToAscii === 'failure+success' || context.config.imageToAscii === 'failure';
         }
         if (makeScreenshotsFromEachBrowsers) {
-            protractorUtil.takeScreenshot(context, function(filename, browserName, finalFile) {
+            protractorUtil.takeScreenshot(context, function(filename, browserName, finalFile, browserInstance) {
                 expectation.screenshots.push({
                     img: filename,
                     browser: browserName,
@@ -119,10 +121,15 @@ protractorUtil.takeScreenshotOnExpectDone = function(context) {
                 if (context.config.writeReportFreq === 'asap') {
                     protractorUtil.writeReport(context);
                 }
-                if (makeAsciiLog) {
+                if (makeAsciiLog && !browserInstance.skipImageToAscii) {
                     try {
                         imageToAscii(finalFile, context.config.imageToAsciiOpts, function(err, converted) {
-                            console.error(err || converted);
+                            var asciImage;
+                            asciImage += '\n\n============================\n';
+                            asciImage += browserName + ' ' + now.format() + ' ' + expectation.message;
+                            asciImage += '\n============================\n';
+                            asciImage += err || converted;
+                            console.log(asciImage);
                         });
                     } catch (err) {
                         console.warn(err);
@@ -184,7 +191,7 @@ protractorUtil.takeScreenshotOnSpecDone = function(result, context, test) {
 
 protractorUtil.writeReport = function(context) {
     var file = context.config.reportFile;
-    console.log('Generating ' + file);
+    // console.log('Generating ' + file);
 
     var data = {
         tests: protractorUtil.testResults,
@@ -235,8 +242,8 @@ protractorUtil.joinReports = function(context) {
             data.stat.pending += report.stat.pending || 0;
             data.stat.disabled += report.stat.disabled || 0;
         } catch (err) {
-            console.warn('Unknown error while process report %s', reports[i]);
-            console.log(err);
+            // console.warn('Unknown error while process report %s', reports[i]);
+            // console.log(err);
         }
     }
 

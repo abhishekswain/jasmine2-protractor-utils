@@ -206,7 +206,14 @@ Default: 'failure' Valid Options: 'failure+success'/'failure'/'none'
 
 Additionally make an ascii image into the console so you can find the issue of you test in your build easier.
 
-Please note that one of the option of `screenshotOnExpect` or `screenshotOnSpec` must be used to generate picture the initial image.
+Please note that one of the option of `screenshotOnExpect` or `screenshotOnSpec` must be used to generate the intial screenshot that as additionally transformed into an ascii image.
+
+If you are using multiple browsers instances you can disable generating ascii image invidiually by setting
+
+```js
+browser.skipImageToAscii = true;
+```
+Then this browser instance will be not generated in the log.
 
 Default: 'failure' Valid Options: 'failure+success'/'failure'/'none'
 
@@ -216,7 +223,7 @@ To use this feature please follow instructions on <https://github.com/IonicaBiza
 
 Options for imageToAscii conversion, more info can be found at <https://github.com/IonicaBizau/image-to-ascii>
 
-Default: ``{bg:true}``Â
+Default: ``{bg:true}``
 
 ## withLogs (Chrome only)
 
