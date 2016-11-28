@@ -102,14 +102,18 @@ protractorUtil.takeScreenshotOnExpectDone = function(context) {
 
         var makeScreenshotsFromEachBrowsers = false;
         var makeAsciiLog = false;
-        if (passed) {
-            protractorUtil.test.passedExpectations.push(expectation);
-            makeScreenshotsFromEachBrowsers = context.config.screenshotOnExpect === 'failure+success';
-            makeAsciiLog = context.config.imageToAscii === 'failure+success';
+        if (protractorUtil.test) {
+            if (passed) {
+                protractorUtil.test.passedExpectations.push(expectation);
+                makeScreenshotsFromEachBrowsers = context.config.screenshotOnExpect === 'failure+success';
+                makeAsciiLog = context.config.imageToAscii === 'failure+success';
+            } else {
+                protractorUtil.test.failedExpectations.push(expectation);
+                makeScreenshotsFromEachBrowsers = context.config.screenshotOnExpect === 'failure+success' || context.config.screenshotOnExpect === 'failure';
+                makeAsciiLog = context.config.imageToAscii === 'failure+success' || context.config.imageToAscii === 'failure';
+            }
         } else {
-            protractorUtil.test.failedExpectations.push(expectation);
-            makeScreenshotsFromEachBrowsers = context.config.screenshotOnExpect === 'failure+success' || context.config.screenshotOnExpect === 'failure';
-            makeAsciiLog = context.config.imageToAscii === 'failure+success' || context.config.imageToAscii === 'failure';
+          console.warn('Calling addExpectationResult before specStarted!');
         }
         if (makeScreenshotsFromEachBrowsers) {
             protractorUtil.takeScreenshot(context, function(filename, browserName, finalFile, browserInstance) {
