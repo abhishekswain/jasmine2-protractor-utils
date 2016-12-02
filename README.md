@@ -93,6 +93,23 @@ npm install azachar/protractor-screenshoter-plugin#feat-ascii-image
 
 NOTE: This plugin depends on [screenshoter-report-analyzer](https://github.com/azachar/screenshoter-report-analyzer). So sometimes even if this plugin version is not updated, the reporter might be.
 
+# Experimental features
+
+Please always check our branches started with `feat-`. There are some new and shiny features that are working but aren't yet published. Each branch has information how to use it and install it. Once it is stable enough, it will be merged to the master branch.
+Feel free to provide feedback to them.
+
+The worth to mention is that one branch support screenshoter in a parallel environment.
+
+```js
+capabilities: {
+    'shardTestFiles': true,
+    'maxInstances': 5
+  },
+```
+
+Have a look at [feat-parallel-support](https://github.com/azachar/protractor-screenshoter-plugin/tree/feat-parallel-support)
+
+
 # Usage
 
 Add this plugin to the protractor config file:
