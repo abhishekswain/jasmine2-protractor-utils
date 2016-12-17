@@ -35,6 +35,9 @@ var imageToAscii = require("image-to-ascii")
  */
 var protractorUtil = function() {};
 
+protractorUtil.logDebug = function() {};
+protractorUtil.logInfo = console.info;
+
 protractorUtil.forEachBrowser = function(action) {
     try {
         if (global.screenshotBrowsers && Object.keys(global.screenshotBrowsers).length > 0) {
@@ -54,7 +57,7 @@ protractorUtil.takeScreenshot = function(context, report) {
 
     function takeInstanceScreenshot(browserInstance, browserName) {
         var screenshotFile = 'screenshots/' + uuid.v1() + '.png';
-        // console.log('Taking screenshot ' + screenshotFile + ' from browser instance ' + browserName);
+        // protractorUtil.logDebug('Taking screenshot ' + screenshotFile + ' from browser instance ' + browserName);
         var finalFile = context.config.screenshotPath + '/' + screenshotFile;
 
         browserInstance.takeScreenshot().then(function(png) {
@@ -75,7 +78,7 @@ protractorUtil.takeScreenshot = function(context, report) {
 protractorUtil.takeLogs = function(context, report) {
 
     function takeLog(browserInstance, browserName) {
-        // console.log('Taking logs from browser instance ' + browserName);
+        // protractorUtil.logDebug('Taking logs from browser instance ' + browserName);
         browserInstance.manage().logs().get('browser').then(function(browserLogs) {
             if (browserLogs && browserLogs.length > 0) {
                 report(browserLogs, browserName);
@@ -99,6 +102,12 @@ protractorUtil.takeScreenshotOnExpectDone = function(context) {
         expectation.screenshots = [];
         expectation.logs = [];
         expectation.when = now.toDate();
+
+        if (!passed && context.config.pauseOn === 'failure') {
+            protractorUtil.logInfo('Pause browser because of a failure: %s', expectation.message);
+            protractorUtil.logDebug(expectation.stack);
+            global.browser.pause();
+        }
 
         var makeScreenshotsFromEachBrowsers = false;
         var makeAsciiLog = false;
@@ -133,11 +142,11 @@ protractorUtil.takeScreenshotOnExpectDone = function(context) {
                             asciImage += browserName + ' ' + now.format() + ' ' + expectation.message;
                             asciImage += '\n============================\n';
                             asciImage += err || converted;
-                            console.log(asciImage);
+                            protractorUtil.logDebug(asciImage);
                         });
                     } catch (err) {
                         console.warn(err);
-                        console.info('Please check the installation at https://github.com/IonicaBizau/image-to-ascii/blob/master/INSTALLATION.md');
+                        console.warn('Please check the installation at https://github.com/IonicaBizau/image-to-ascii/blob/master/INSTALLATION.md');
                     }
                 }
             });
@@ -195,7 +204,7 @@ protractorUtil.takeScreenshotOnSpecDone = function(result, context, test) {
 
 protractorUtil.writeReport = function(context) {
     var file = context.config.reportFile;
-    // console.log('Generating ' + file);
+    // protractorUtil.logDebug('Generating ' + file);
 
     var data = {
         tests: protractorUtil.testResults,
@@ -204,7 +213,7 @@ protractorUtil.writeReport = function(context) {
     };
 
     fse.outputFile(file, JSON.stringify(dereferenceJSON(data)), function(err) {
-        if (err) console.log(err);
+        if (err) protractorUtil.logDebug(err);
         protractorUtil.joinReports(context);
     });
 };
@@ -247,7 +256,7 @@ protractorUtil.joinReports = function(context) {
             data.stat.disabled += report.stat.disabled || 0;
         } catch (err) {
             // console.warn('Unknown error while process report %s', reports[i]);
-            // console.log(err);
+            // protractorUtil.logDebug(err);
         }
     }
 
@@ -255,13 +264,13 @@ protractorUtil.joinReports = function(context) {
     var after = ");";
 
     fse.outputFile(file, before + JSON.stringify(data) + after, function(err) {
-        if (err) console.log(err);
+        if (err) protractorUtil.logDebug(err);
     });
 };
 
 protractorUtil.installReporter = function(context) {
     var dest = context.config.screenshotPath + '/';
-    console.log('Creating reporter at ' + dest);
+    protractorUtil.logInfo('Creating reporter at ' + dest);
     try {
         var src = path.join(require.resolve('screenshoter-report-analyzer/dist/index.html'), '../');
         fse.copy(src, dest);
@@ -298,7 +307,15 @@ protractorUtil.registerJasmineReporter = function(context) {
                 protractorUtil.takeScreenshotOnSpecDone(result, context, protractorUtil.test);
             }
 
-            //calcuate total fails, success and so on
+            var passed = result.failedExpectations.length === 0;
+            if (!passed && context.config.pauseOn === 'failure') {
+                protractorUtil.logInfo('Pause browser because of a spec failed  - %s', result.name);
+                protractorUtil.logDebug(result.failedExpectations[0].message);
+                protractorUtil.logDebug(result.failedExpectations[0].stack);
+                global.browser.pause();
+            }
+
+            //calculate total fails, success and so on
             if (!protractorUtil.stat[result.status]) {
                 protractorUtil.stat[result.status] = 0;
             }
@@ -389,7 +406,9 @@ protractorUtil.prototype.setup = function() {
         clearFoldersBeforeTest: true,
         withLogs: true,
         screenshotOnExpect: 'failure+success',
+        verbose: 'info',
         screenshotOnSpec: 'failure+success',
+        pauseOn: 'never',
         imageToAscii: 'failure',
         imageToAsciiOpts: {
             bg: true
@@ -400,6 +419,11 @@ protractorUtil.prototype.setup = function() {
 
     this.config = _.merge({}, defaultSettings, this.config);
     this.config.reportFile = this.config.screenshotPath + '/reports/' + uuid.v1() + '.js';
+
+    if (this.config.verbose === 'debug') {
+        protractorUtil.logDebug = console.log;
+        protractorUtil.logInfo = console.info;
+    }
 
     if (this.config.clearFoldersBeforeTest) {
         try {
@@ -413,7 +437,7 @@ protractorUtil.prototype.setup = function() {
         if (err) {
             console.error(err);
         } else {
-            console.log(self.config.screenshotPath + '/screenshots' + ' folder created!');
+            protractorUtil.logDebug(self.config.screenshotPath + '/screenshots' + ' folder created!');
         }
     });
 
@@ -421,15 +445,15 @@ protractorUtil.prototype.setup = function() {
         if (err) {
             console.error(err);
         } else {
-            console.log(self.config.screenshotPath + '/reports' + ' folder created!');
+            protractorUtil.logDebug(self.config.screenshotPath + '/reports' + ' folder created!');
         }
     });
 
 
     var pjson = require(__dirname + '/package.json');
-    console.log('Activated Protractor Screenshoter Plugin, ver. ' + pjson.version + ' (c) 2016 ' + pjson.author + ' and contributors');
-    console.log('The resolved configuration is:');
-    console.log(this.config);
+    protractorUtil.logInfo('Activated Protractor Screenshoter Plugin, ver. ' + pjson.version + ' (c) 2016 ' + pjson.author + ' and contributors');
+    protractorUtil.logDebug('The resolved configuration is:');
+    protractorUtil.logDebug(this.config);
 };
 
 /**

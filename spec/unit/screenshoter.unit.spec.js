@@ -67,6 +67,8 @@ describe("Screenshoter unit", function() {
             withLogs: true,
             screenshotOnExpect: 'failure+success',
             screenshotOnSpec: 'failure+success',
+            pauseOn: 'never',
+            verbose: 'info',
             imageToAscii: 'failure',
             imageToAsciiOpts: {
                 bg: true
@@ -89,6 +91,8 @@ describe("Screenshoter unit", function() {
             withLogs: true,
             screenshotOnExpect: 'failure+success',
             screenshotOnSpec: 'failure+success',
+            pauseOn: 'never',
+            verbose: 'info',
             imageToAscii: 'failure',
             imageToAsciiOpts: {
                 bg: true
@@ -115,6 +119,8 @@ describe("Screenshoter unit", function() {
             screenshotOnExpect: 'failure+success',
             screenshotOnSpec: 'failure',
             imageToAscii: 'failure',
+            pauseOn: 'never',
+            verbose: 'info',
             imageToAsciiOpts: {
                 bg: true
             },

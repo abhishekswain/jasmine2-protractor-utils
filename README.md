@@ -124,6 +124,8 @@ exports.config = {
        htmlReport: {Boolean}      (Default - true),
        screenshotPath: {String}                (Default - '<reports/e2e>/screenshots')
        writeReportFreq: {String}      (Default - 'end', 'spec', 'asap'),
+       verbose: {String} (Default - 'info', 'debug'),
+       pauseOn: {String}    (Default - 'never', 'failure', 'spec'),
        imageToAscii: {String}    (Default - 'failure+success', 'failure', 'none'),
        imageToAsciiOpts:{Obbject} (Default - {bg:true})
        clearFoldersBeforeTest: {Boolean}       (Default - false),
@@ -218,6 +220,19 @@ Default: 'failure+success' Valid Options: 'failure+success'/'failure'/'none'
 Takes from each browser instance stored in global.screenshotBrowsers screenshots for each Jasmine2 spec failure or success, depending on value.
 
 Default: 'failure' Valid Options: 'failure+success'/'failure'/'none'
+
+## pauseOn
+
+If fails, pause browser on expectation failure or spec failure or never.
+
+Default: 'never' Valid Options: 'failure'/'spec'
+
+
+## verbose
+
+If set to ``debug`` display internal logging.
+
+Default: 'info' Valid Options: 'debug'/'info'
 
 ## imageToAscii
 
