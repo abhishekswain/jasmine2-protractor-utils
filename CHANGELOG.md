@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.3.0"></a>
+# [0.3.0](https://github.com/azachar/protractor-screenshoter-plugin/compare/v0.2.3...v0.3.0) (2016-12-31)
+
+
+### Bug Fixes
+
+* **joinReports:** tracking of pending and disabled partial tests ([fd51ac2](https://github.com/azachar/protractor-screenshoter-plugin/commit/fd51ac2))
+* **package:** update screenshoter-report-analyzer to version 0.3.0 ([832ff0e](https://github.com/azachar/protractor-screenshoter-plugin/commit/832ff0e))
+* **package:** update uuid to version 3.0.0 ([8ec9388](https://github.com/azachar/protractor-screenshoter-plugin/commit/8ec9388))
+* **plugin:** errors catching ([119bb37](https://github.com/azachar/protractor-screenshoter-plugin/commit/119bb37))
+* **plugin:** errors catching ([e59f28b](https://github.com/azachar/protractor-screenshoter-plugin/commit/e59f28b))
+* **plugin:** global.screenshoterBrowsers ([84b09ad](https://github.com/azachar/protractor-screenshoter-plugin/commit/84b09ad))
+* **plugin:** workaround for early calling of addExpectationResult ([0556e4c](https://github.com/azachar/protractor-screenshoter-plugin/commit/0556e4c))
+* **save:** dereferencing before storing to json ([8b1b9f7](https://github.com/azachar/protractor-screenshoter-plugin/commit/8b1b9f7))
+
+
+### Features
+
+* browser.skipImageToAscii ([82aa6f3](https://github.com/azachar/protractor-screenshoter-plugin/commit/82aa6f3))
+* Image to ASCII Support ([163a9a2](https://github.com/azachar/protractor-screenshoter-plugin/commit/163a9a2))
+* parellel support ([5b244f3](https://github.com/azachar/protractor-screenshoter-plugin/commit/5b244f3))
+* **plugin:** pause on failure or spec, by default is never ([4593fb0](https://github.com/azachar/protractor-screenshoter-plugin/commit/4593fb0))
+
+
+### BREAKING CHANGES
+
+* plugin: global.screenshoterBrowsers is automatically called on beforeAll instead of beforeEach.
+
+
+
 <a name="0.2.3"></a>
 ## [0.2.3](https://github.com/azachar/protractor-screenshoter-plugin/compare/v0.2.2...v0.2.3) (2016-11-18)
 
