@@ -711,4 +711,112 @@ describe("Screenshoter running under protractor", function() {
             });
         });
     });
+
+    describe("parallel testing", function() {
+
+        beforeAll(function() {
+            runProtractorWithConfig('parallel.js');
+        });
+
+        it("should generate report.js", function(done) {
+            fs.readFile('.tmp/parallel/report.js', 'utf8', function(err, data) {
+                if (err) {
+                    return done.fail(err);
+                }
+                expect(data).toContain("angular.module('reporter').constant('data'");
+
+                var report = getReportAsJson(data);
+                expect(report.stat.passed).toBe(6);
+                expect(report.generatedOn).toBeDefined();
+                expect(report.ci).toBeDefined();
+                expect(report.ci.build).toBeDefined();
+                expect(report.ci.tag).toBeDefined();
+                expect(report.ci.sha).toBeDefined();
+                expect(report.ci.branch).toBeDefined();
+                expect(report.ci.name).toBeDefined();
+
+                expect(report.tests.length).toBe(6);
+                expect(report.tests[0].specLogs.length).toBe(0);
+                expect(report.tests[0].specScreenshots.length).toBe(1);
+                expect(report.tests[0].specScreenshots[0].img).toBeDefined();
+                expect(report.tests[0].specScreenshots[0].browser).toBeDefined();
+                expect(report.tests[0].specScreenshots[0].when).toBeDefined();
+
+                expect(report.tests[0].failedExpectations.length).toBe(0);
+                expect(report.tests[0].passedExpectations.length).toBe(1);
+                expect(report.tests[0].passedExpectations[0].logs.length).toBeLessThan(2);
+                expect(report.tests[0].passedExpectations[0].screenshots.length).toBe(1);
+                expect(report.tests[0].passedExpectations[0].screenshots[0].img).toBeDefined();
+                expect(report.tests[0].passedExpectations[0].screenshots[0].browser).toBeDefined();
+                expect(report.tests[0].passedExpectations[0].screenshots[0].when).toBeDefined();
+
+                expect(report.tests[1].specLogs.length).toBe(0);
+                expect(report.tests[1].specScreenshots.length).toBe(1);
+                expect(report.tests[1].specScreenshots[0].img).toBeDefined();
+                expect(report.tests[1].specScreenshots[0].browser).toBeDefined();
+                expect(report.tests[1].specScreenshots[0].when).toBeDefined();
+
+                expect(report.tests[1].failedExpectations.length).toBe(0);
+                expect(report.tests[1].passedExpectations.length).toBe(2);
+                expect(report.tests[1].passedExpectations[0].logs.length).toBeLessThan(2);
+                expect(report.tests[1].passedExpectations[0].screenshots.length).toBe(1);
+                expect(report.tests[1].passedExpectations[0].screenshots[0].img).toBeDefined();
+                expect(report.tests[1].passedExpectations[0].screenshots[0].browser).toBeDefined();
+                expect(report.tests[1].passedExpectations[0].screenshots[0].when).toBeDefined();
+
+                expect(report.tests[1].passedExpectations[1].logs.length).toBeLessThan(2);
+                expect(report.tests[1].passedExpectations[1].screenshots.length).toBe(1);
+                expect(report.tests[1].passedExpectations[1].screenshots[0].img).toBeDefined();
+                expect(report.tests[1].passedExpectations[1].screenshots[0].browser).toBeDefined();
+                expect(report.tests[1].passedExpectations[1].screenshots[0].when).toBeDefined();
+
+                expect(report.tests[2].specLogs.length).toBe(0);
+                expect(report.tests[2].specScreenshots.length).toBe(1);
+                expect(report.tests[2].specScreenshots[0].img).toBeDefined();
+                expect(report.tests[2].specScreenshots[0].browser).toBeDefined();
+                expect(report.tests[2].specScreenshots[0].when).toBeDefined();
+
+                expect(report.tests[2].failedExpectations.length).toBe(0);
+                expect(report.tests[2].passedExpectations.length).toBe(2);
+                expect(report.tests[2].passedExpectations[0].logs.length).toBeLessThan(2);
+                expect(report.tests[2].passedExpectations[0].screenshots.length).toBe(1);
+                expect(report.tests[2].passedExpectations[0].screenshots[0].img).toBeDefined();
+                expect(report.tests[2].passedExpectations[0].screenshots[0].browser).toBeDefined();
+                expect(report.tests[2].passedExpectations[0].screenshots[0].when).toBeDefined();
+
+                expect(report.tests[2].passedExpectations[1].logs.length).toBeLessThan(2);
+                expect(report.tests[2].passedExpectations[1].screenshots.length).toBe(1);
+                expect(report.tests[2].passedExpectations[1].screenshots[0].img).toBeDefined();
+                expect(report.tests[2].passedExpectations[1].screenshots[0].browser).toBeDefined();
+                expect(report.tests[2].passedExpectations[1].screenshots[0].when).toBeDefined();
+
+                done();
+            });
+        });
+
+        it("should generate screenshots", function(done) {
+            fs.readdir('.tmp/parallel/screenshots', function(err, items) {
+                if (err) {
+                    return done.fail(err);
+                }
+                expect(items.length).toEqual(16);
+                done();
+            });
+        });
+
+
+        it("should install reporter", function(done) {
+            fs.readFile('.tmp/parallel/index.html', 'utf8', function(err, data) {
+                if (err) {
+                    return done.fail(err);
+                }
+                expect(data).toContain('ui-view');
+                expect(data).toContain('html');
+                done();
+            });
+        });
+
+    });
+
+
 });

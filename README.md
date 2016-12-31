@@ -13,11 +13,14 @@
 This plugin captures for each **expectation** or **spec** console **logs** and makes **screenshots** for **each browser** instance. Also it comes with a beautifull angular based [HTML reporter for chat alike apps](https://github.com/azachar/screenshoter-report-analyzer).
 
 1. This plugin can take screenshots for each Jasmine2 expect success/failure on _multiple-browsers instances_ at once.
-2. It can take screenshots for each spec failure / success as well
+2. It can take screenshots for each spec failure/success as well
 3. For each expectation or spec can capture console logs for each browser instance
 4. It can generate a report analyzer - angular+bootstrap HTML reports with active filtering to easy find out why your tests are failing
 5. HTML reports allow you to analyze your browser's console logs as well.
-6. Support circleci.com (the report displays a build number, a branch, etc. )
+6. Supports circleci.com (the report displays a build number, a branch, etc. )
+7. Supports parallel tests execution
+8. Makes optional Ascii screenshots
+
 
 ## Screenshots
 
@@ -64,18 +67,6 @@ NOTE: This plugin depends on [screenshoter-report-analyzer](https://github.com/a
 Please always check our branches started with `feat-`. There are some new and shiny features that are working but aren't yet published. Each branch has information how to use it and install it. Once it is stable enough, it will be merged to the master branch.
 Feel free to provide feedback to them.
 
-The worth to mention is that one branch support screenshoter in a parallel environment.
-
-```js
-capabilities: {
-    'shardTestFiles': true,
-    'maxInstances': 5
-  },
-```
-
-Have a look at [feat-parallel-support](https://github.com/azachar/protractor-screenshoter-plugin/tree/feat-parallel-support)
-
-
 # Usage
 
 Add this plugin to the protractor config file:
@@ -90,6 +81,10 @@ exports.config = {
        htmlReport: {Boolean}      (Default - true),
        screenshotPath: {String}                (Default - '<reports/e2e>/screenshots')
        writeReportFreq: {String}      (Default - 'end', 'spec', 'asap'),
+       verbose: {String} (Default - 'info', 'debug'),
+       pauseOn: {String}    (Default - 'never', 'failure', 'spec'),
+       imageToAscii: {String}    (Default - 'failure+success', 'failure', 'none'),
+       imageToAsciiOpts:{Obbject} (Default - {bg:true})
        clearFoldersBeforeTest: {Boolean}       (Default - false),
        failTestOnErrorLog: {
                 failTestOnErrorLogLevel: {Number},  (Default - 900)
@@ -118,6 +113,7 @@ exports.config = {
         screenshotOnSpec: 'none',
         withLogs: 'true',
         writeReportFreq: 'asap',
+        imageToAscii: 'failure',
         clearFoldersBeforeTest: true
     }],
 
@@ -162,6 +158,38 @@ beforeAll(function() {
   });
 ```
 
+## Running tests in parallel
+
+For each run of Protractor, it creates separate tests results that are in the end merged into one report.
+
+The configuration such as this one are supported as of version 0.3.x:
+
+```javascript
+exports.config = {
+    framework: 'jasmine2',
+    //like usual (no change in config api)
+    plugins: [{
+        package: 'protractor-screenshoter-plugin',
+        screenshotPath: './REPORTS/e2e',
+        screenshotOnExpect: 'failure+success',
+        screenshotOnSpec: 'none',
+        withLogs: 'true',
+        writeReportFreq: 'asap',
+        clearFoldersBeforeTest: true
+    }],
+    //this is new and supported
+    capabilities: {
+        'browserName':'chrome',
+        'shardTestFiles': true,
+        'maxInstances': 5
+    }
+};
+```
+
+
+## Ascii screenshots
+If there is a failure (based on the config) it creates also an ASCII image into a log file. For this feature, you need to install additional OS dependent libraries. For more information read the [doc imageToAscii](#imagetoascii) bellow.
+
 ## htmlReport
 
 If set to 'false', disables HTML report generation.
@@ -181,6 +209,41 @@ Default: 'failure+success' Valid Options: 'failure+success'/'failure'/'none'
 Takes from each browser instance stored in global.screenshotBrowsers screenshots for each Jasmine2 spec failure or success, depending on value.
 
 Default: 'failure' Valid Options: 'failure+success'/'failure'/'none'
+
+## pauseOn
+
+If fails, pause browser on expectation failure or spec failure or never.
+
+Default: 'never' Valid Options: 'failure'/'spec'
+
+## verbose
+
+If set to ``debug`` display internal logging.
+
+Default: 'info' Valid Options: 'debug'/'info'
+
+## imageToAscii
+
+Additionally, make an ASCII image into the console so you can find the issue of you test in your build easier.
+
+Please note that one of the options of `screenshotOnExpect` or `screenshotOnSpec` must be used to generate the initial screenshot that as additionally transformed into an ASCII image.
+
+If you are using multiple browsers instances you can disable generating ASCII images individually by setting
+
+```js
+browser.skipImageToAscii = true;
+```
+Then this browser instance will be not generated in the log file.
+
+Default: 'failure' Valid Options: 'failure+success'/'failure'/'none'
+
+To use this feature please follow instructions on <https://github.com/IonicaBizau/image-to-ascii/blob/master/INSTALLATION.md>
+
+## imageToAsciiOpts
+
+Options for imageToAscii conversion, more info can be found at <https://github.com/IonicaBizau/image-to-ascii>
+
+Default: ``{bg:true}``
 
 ## withLogs (Chrome only)
 
@@ -226,9 +289,9 @@ Default: 900
 
 ### excludeKeywords
 
-An array of keywords to be excluded , while searching for error logs. i.e If a log contains any of these keywords , spec/test will not be marked failed.
+An array of keywords to be excluded, while searching for error logs. i.e If a log contains any of these keywords, spec/test will not be marked failed.
 
-Please do not specify this flag , if you don't supply any such keywords.
+Please do not specify this flag, if you don't supply any such keywords.
 
 # Development
 

@@ -60,11 +60,19 @@ describe("Screenshoter unit", function() {
     it("should resolve a default config", function() {
         screenshoter.config = {};
         screenshoter.setup();
+        expect(screenshoter.config.reportFile).toBeDefined();
+        delete screenshoter.config.reportFile;
         expect(screenshoter.config).toEqual({
             screenshotPath: './reports/e2e',
             withLogs: true,
             screenshotOnExpect: 'failure+success',
             screenshotOnSpec: 'failure+success',
+            pauseOn: 'never',
+            verbose: 'info',
+            imageToAscii: 'failure',
+            imageToAsciiOpts: {
+                bg: true
+            },
             clearFoldersBeforeTest: true,
             htmlReport: true,
             writeReportFreq: 'end'
@@ -76,11 +84,19 @@ describe("Screenshoter unit", function() {
             path: './bla/bla'
         };
         screenshoter.setup();
+        expect(screenshoter.config.reportFile).toBeDefined();
+        delete screenshoter.config.reportFile;
         expect(screenshoter.config).toEqual({
             screenshotPath: './reports/e2e',
             withLogs: true,
             screenshotOnExpect: 'failure+success',
             screenshotOnSpec: 'failure+success',
+            pauseOn: 'never',
+            verbose: 'info',
+            imageToAscii: 'failure',
+            imageToAsciiOpts: {
+                bg: true
+            },
             clearFoldersBeforeTest: true,
             htmlReport: true,
             writeReportFreq: 'end',
@@ -95,11 +111,19 @@ describe("Screenshoter unit", function() {
             screenshotOnSpec: 'failure'
         };
         screenshoter.setup();
+        expect(screenshoter.config.reportFile).toBeDefined();
+        delete screenshoter.config.reportFile;
         expect(screenshoter.config).toEqual({
             screenshotPath: 'REPORTS',
             withLogs: true,
             screenshotOnExpect: 'failure+success',
             screenshotOnSpec: 'failure',
+            imageToAscii: 'failure',
+            pauseOn: 'never',
+            verbose: 'info',
+            imageToAsciiOpts: {
+                bg: true
+            },
             clearFoldersBeforeTest: true,
             writeReportFreq: 'end',
             htmlReport: true
