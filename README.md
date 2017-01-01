@@ -190,6 +190,9 @@ exports.config = {
 ## Ascii screenshots
 If there is a failure (based on the config) it creates also an ASCII image into a log file. For this feature, you need to install additional OS dependent libraries. For more information read the [doc imageToAscii](#imagetoascii) bellow.
 
+
+# Config reference
+
 ## htmlReport
 
 If set to 'false', disables HTML report generation.
