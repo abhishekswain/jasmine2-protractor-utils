@@ -6,6 +6,8 @@ var moment = require('moment');
 var path = require('path');
 var imageToAscii = require("image-to-ascii");
 var CircularJSON = require('circular-json');
+var q = require('q');
+var assert = require('assert');
 
 /**
  * This plugin does few things:
@@ -42,10 +44,10 @@ protractorUtil.forEachBrowser = function(action) {
     try {
         if (global.screenshotBrowsers && Object.keys(global.screenshotBrowsers).length > 0) {
             _.forOwn(global.screenshotBrowsers, function(instance, name) {
-                action(instance, name);
+                action(instance, name, protractorUtil.newLongRunningOperationCounter());
             });
         } else {
-            action(global.browser, 'default');
+            action(global.browser, 'default', protractorUtil.newLongRunningOperationCounter());
         }
     } catch (err) {
         console.warn('Unknown error:');
@@ -54,8 +56,7 @@ protractorUtil.forEachBrowser = function(action) {
 };
 
 protractorUtil.takeScreenshot = function(context, report) {
-
-    function takeInstanceScreenshot(browserInstance, browserName) {
+    function takeInstanceScreenshot(browserInstance, browserName, cb) {
         var screenshotFile = 'screenshots/' + uuid.v1() + '.png';
         // protractorUtil.logDebug('Taking screenshot ' + screenshotFile + ' from browser instance ' + browserName);
         var finalFile = context.config.screenshotPath + '/' + screenshotFile;
@@ -63,12 +64,16 @@ protractorUtil.takeScreenshot = function(context, report) {
         browserInstance.takeScreenshot().then(function(png) {
             var stream = fse.createWriteStream(finalFile);
             stream.write(new Buffer(png, 'base64'));
-            stream.end();
             stream.on('finish', function() {
-                report(screenshotFile, browserName, finalFile, browserInstance);
+                report(screenshotFile, browserName, finalFile, browserInstance, cb);
             });
+            stream.on('error', function(e) {
+                cb(e);
+            });
+            stream.end();
         }, function(err) {
             console.warn('Error in browser instance ' + browserName + ' while taking the screenshot: ' + finalFile + ' - ' + err.message);
+            cb(err);
         });
     }
 
@@ -76,15 +81,17 @@ protractorUtil.takeScreenshot = function(context, report) {
 };
 
 protractorUtil.takeLogs = function(context, report) {
-
-    function takeLog(browserInstance, browserName) {
+    function takeLog(browserInstance, browserName, cb) {
         // protractorUtil.logDebug('Taking logs from browser instance ' + browserName);
         browserInstance.manage().logs().get('browser').then(function(browserLogs) {
             if (browserLogs && browserLogs.length > 0) {
-                report(browserLogs, browserName);
+                report(browserLogs, browserName, cb);
+            } else {
+                cb();
             }
         }, function(err) {
             console.warn('Error in browser instance ' + browserName + ' while taking the logs:' + err.message);
+            cb(err);
         });
     }
 
@@ -125,15 +132,12 @@ protractorUtil.takeScreenshotOnExpectDone = function(context) {
             console.warn('Calling addExpectationResult before specStarted!');
         }
         if (makeScreenshotsFromEachBrowsers) {
-            protractorUtil.takeScreenshot(context, function(filename, browserName, finalFile, browserInstance) {
+            protractorUtil.takeScreenshot(context, function(filename, browserName, finalFile, browserInstance, done) {
                 expectation.screenshots.push({
                     img: filename,
                     browser: browserName,
                     when: new Date()
                 });
-                if (context.config.writeReportFreq === 'asap') {
-                    protractorUtil.writeReport(context);
-                }
                 if (makeAsciiLog && !browserInstance.skipImageToAscii) {
                     try {
                         imageToAscii(finalFile, context.config.imageToAsciiOpts, function(err, converted) {
@@ -149,16 +153,23 @@ protractorUtil.takeScreenshotOnExpectDone = function(context) {
                         console.warn('Please check the installation at https://github.com/IonicaBizau/image-to-ascii/blob/master/INSTALLATION.md');
                     }
                 }
+                if (context.config.writeReportFreq === 'asap') {
+                    protractorUtil.writeReport(context, done);
+                } else {
+                    done();
+                }
             });
         }
         if (context.config.withLogs) {
-            protractorUtil.takeLogs(context, function(logs, browserName) {
+            protractorUtil.takeLogs(context, function(logs, browserName, done) {
                 expectation.logs.push({
                     logs: logs,
                     browser: browserName
                 });
                 if (context.config.writeReportFreq === 'asap') {
-                    protractorUtil.writeReport(context);
+                    protractorUtil.writeReport(context, done);
+                } else {
+                    done();
                 }
             });
         }
@@ -176,25 +187,29 @@ protractorUtil.takeScreenshotOnSpecDone = function(result, context, test) {
         makeScreenshotsFromEachBrowsers = context.config.screenshotOnSpec === 'failure+success' || context.config.screenshotOnSpec === 'failure';
     }
     if (makeScreenshotsFromEachBrowsers) {
-        protractorUtil.takeScreenshot(context, function(file, browserName) {
+        protractorUtil.takeScreenshot(context, function(file, browserName, finalFile, browserInstance, done) {
             test.specScreenshots.push({
                 img: file,
                 browser: browserName,
                 when: new Date()
             });
-            if (context.config.writeReportFreq === 'asap' || context.config.writeReportFreq === 'spec' || protractorUtil.jasmineDone) {
-                protractorUtil.writeReport(context);
+            if (context.config.writeReportFreq === 'asap' || context.config.writeReportFreq === 'spec') {
+                protractorUtil.writeReport(context, done);
+            } else {
+                done();
             }
         });
     }
     if (context.config.withLogs) {
-        protractorUtil.takeLogs(context, function(logs, browserName) {
+        protractorUtil.takeLogs(context, function(logs, browserName, done) {
             test.specLogs.push({
                 logs: logs,
                 browser: browserName
             });
-            if (context.config.writeReportFreq === 'asap' || context.config.writeReportFreq === 'spec' || protractorUtil.jasmineDone) {
-                protractorUtil.writeReport(context);
+            if (context.config.writeReportFreq === 'asap' || context.config.writeReportFreq === 'spec') {
+                protractorUtil.writeReport(context, done);
+            } else {
+                done();
             }
         });
     }
@@ -202,7 +217,8 @@ protractorUtil.takeScreenshotOnSpecDone = function(result, context, test) {
 }
 
 
-protractorUtil.writeReport = function(context) {
+protractorUtil.writeReport = function(context, done) {
+    assert(done);
     var file = context.config.reportFile;
     // protractorUtil.logDebug('Generating ' + file);
 
@@ -213,12 +229,15 @@ protractorUtil.writeReport = function(context) {
     };
 
     fse.outputFile(file, CircularJSON.stringify(data), function(err) {
-        if (err) protractorUtil.logDebug(err);
-        protractorUtil.joinReports(context);
+        if (err) {
+            return done(err);
+        }
+        protractorUtil.joinReports(context, done);
     });
 };
 
-protractorUtil.joinReports = function(context) {
+protractorUtil.joinReports = function(context, done) {
+    assert(done);
     var file = context.config.screenshotPath + '/report.js';
     var reports = fse.walkSync(context.config.screenshotPath + '/reports/')
 
@@ -257,6 +276,7 @@ protractorUtil.joinReports = function(context) {
         } catch (err) {
             // console.warn('Unknown error while process report %s', reports[i]);
             // protractorUtil.logDebug(err);
+            return done(err);
         }
     }
 
@@ -264,7 +284,10 @@ protractorUtil.joinReports = function(context) {
     var after = ");";
 
     fse.outputFile(file, before + JSON.stringify(data) + after, function(err) {
-        if (err) protractorUtil.logDebug(err);
+        if (err) {
+            return done(err);
+        }
+        return done(null);
     });
 };
 
@@ -304,15 +327,7 @@ protractorUtil.registerJasmineReporter = function(context) {
         },
         specDone: function(result) {
             if (context.config.screenshotOnSpec != 'none') {
-                protractorUtil.takeScreenshotOnSpecDone(result, context, protractorUtil.test);
-            }
-
-            var passed = result.failedExpectations.length === 0;
-            if (!passed && context.config.pauseOn === 'failure') {
-                protractorUtil.logInfo('Pause browser because of a spec failed  - %s', result.name);
-                protractorUtil.logDebug(result.failedExpectations[0].message);
-                protractorUtil.logDebug(result.failedExpectations[0].stack);
-                global.browser.pause();
+                protractorUtil.takeScreenshotOnSpecDone(result, context, protractorUtil.test); //exec async operation
             }
 
             //calculate total fails, success and so on
@@ -327,12 +342,16 @@ protractorUtil.registerJasmineReporter = function(context) {
 
             _.merge(protractorUtil.test, result);
             if (context.config.writeReportFreq === 'asap' || context.config.writeReportFreq === 'spec') {
-                protractorUtil.writeReport(context);
+                protractorUtil.writeReport(context, protractorUtil.newLongRunningOperationCounter());
             }
-        },
-        jasmineDone: function() {
-            protractorUtil.jasmineDone = true; //taking screenshots after the spec might be not finished since it is an async operation
-            protractorUtil.writeReport(context);
+
+            var passed = result.failedExpectations.length === 0;
+            if (!passed && context.config.pauseOn === 'failure') {
+                protractorUtil.logInfo('Pause browser because of a spec failed  - %s', result.name);
+                protractorUtil.logDebug(result.failedExpectations[0].message);
+                protractorUtil.logDebug(result.failedExpectations[0].stack);
+                global.browser.pause();
+            }
         }
     });
 };
@@ -371,7 +390,7 @@ protractorUtil.failTestOnErrorLog = function(context) {
             /*
              * Verifies that console has no error logs, if error log is there test is marked as failure
              */
-            function verifyConsole(browserLogs, browserName) {
+            function verifyConsole(browserLogs, browserName, done) {
 
                 // browserLogs is an array of objects with level and message fields
                 if (browserLogs) {
@@ -390,6 +409,7 @@ protractorUtil.failTestOnErrorLog = function(context) {
                         }
                     });
                 }
+                done();
             }
 
             protractorUtil.takeLogs(context, verifyConsole);
@@ -451,7 +471,7 @@ protractorUtil.prototype.setup = function() {
 
 
     var pjson = require(__dirname + '/package.json');
-    protractorUtil.logInfo('Activated Protractor Screenshoter Plugin, ver. ' + pjson.version + ' (c) 2016 ' + pjson.author + ' and contributors');
+    protractorUtil.logInfo('Activated Protractor Screenshoter Plugin, ver. ' + pjson.version + ' (c) 2017 ' + pjson.author + ' and contributors');
     protractorUtil.logDebug('The resolved configuration is:');
     protractorUtil.logDebug(this.config);
 };
@@ -470,5 +490,52 @@ protractorUtil.prototype.onPrepare = function() {
         return protractorUtil.failTestOnErrorLog(this);
     }
 }
+
+var deferred = q.defer();
+protractorUtil.runningOperations = 0;
+
+protractorUtil.resolve = function() {
+    deferred.resolve.apply(deferred, arguments);
+};
+
+protractorUtil.newLongRunningOperationCounter = function() {
+    protractorUtil.runningOperations++;
+    // protractorUtil.logDebug('Open operations ', protractorUtil.runningOperations);
+
+    return function(err, result) {
+        protractorUtil.runningOperations--;
+        // protractorUtil.logDebug('Remaining operations ', protractorUtil.runningOperations);
+    }
+};
+
+protractorUtil.prototype.teardown = function() {
+    // protractorUtil.logDebug('===== teardown screenshoter =====');
+    var self = this;
+
+    function finish() {
+        protractorUtil.writeReport(self, function(err, result) {
+            if (err) {
+                protractorUtil.logDebug(err);
+            }
+            protractorUtil.resolve();
+        });
+    }
+
+    var attempt = 0;
+
+    function waitUntilAllOperationsAreDone() {
+        attempt++;
+        // protractorUtil.logDebug('Remaining running operations ', protractorUtil.runningOperations);
+        if (protractorUtil.runningOperations === 0 || attempt > 10) {
+            finish();
+        } else {
+            setTimeout(waitUntilAllOperationsAreDone, 1000);
+        }
+    }
+
+    waitUntilAllOperationsAreDone();
+
+    return deferred.promise;
+};
 
 module.exports = new protractorUtil();
