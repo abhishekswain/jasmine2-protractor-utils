@@ -109,6 +109,10 @@ var Jasmine2Reporter = function (htmlReportPath, screenshotPath, config) {
         suites.forEach(function (suite, index) {
 
             var flag = true;
+            
+            if(!suite.specs){
+                return;
+            }
 
             suite.specs.forEach(function (spec, specIndex) {
 
