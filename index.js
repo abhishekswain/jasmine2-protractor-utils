@@ -111,7 +111,8 @@ protractorUtil.takeScreenshotOnExpectDone = function(context) {
         expectation.when = now.toDate();
 
         if (!passed && context.config.pauseOn === 'failure') {
-            protractorUtil.logInfo('Pause browser because of a failure: %s', expectation.message);
+            protractorUtil.logInfo('\n\nPause browser because of a failure: %s', expectation.message);
+            protractorUtil.logInfo('\nAt spec: %s\n\n', self.result.description)
             protractorUtil.logDebug(expectation.stack);
             global.browser.pause();
         }
